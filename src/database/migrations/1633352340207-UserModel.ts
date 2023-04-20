@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
-import {
-  MigrationInterface, QueryRunner, Table, TableIndex,
-} from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
+import { UserTypes } from '@root/entities';
 
 export class UserModel1633352340207 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -15,6 +14,12 @@ export class UserModel1633352340207 implements MigrationInterface {
             isPrimary: true,
             isGenerated: true,
             generationStrategy: 'increment',
+          },
+          {
+            name: 'userType',
+            type: 'enum',
+            enum: [UserTypes.ADMIN, UserTypes.DRIVER],
+            isNullable: false,
           },
           {
             name: 'email',
@@ -62,14 +67,14 @@ export class UserModel1633352340207 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
     await queryRunner.createIndex(
       'users',
       new TableIndex({
         name: 'user_email_index',
         columnNames: ['email'],
-      }),
+      })
     );
   }
 
