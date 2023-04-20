@@ -1,0 +1,6 @@
+.env
+.idea
+.husky
+build
+node_modules
+db.sql
