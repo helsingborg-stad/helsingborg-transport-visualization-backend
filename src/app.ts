@@ -7,7 +7,7 @@ import { config } from '@config';
 import devRequestLogger from '@utils/devRequestLogger';
 import apiDocs from '@services/swagger';
 import { initDB } from '@services/database';
-import { registerRoutes } from './domains';
+import { registerRoutes } from './routes';
 
 export default async () => {
   await initDB();
