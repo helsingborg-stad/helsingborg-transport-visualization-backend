@@ -1,0 +1,36 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.local
+    command: npm run dev
+    volumes:
+      - '.:/app'
+      - '/app/node_modules/'
+    ports:
+      - '3000:3000'
+    restart: always
+    depends_on:
+      - database
+    networks:
+      - app-network
+    environment:
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=db
+      - DB_HOST=database
+      - DB_PORT=5432
+  database:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=db
+    ports:
+      - '5438:5432'
+    networks:
+      - app-network
+networks:
+  app-network:

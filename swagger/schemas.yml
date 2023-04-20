@@ -1,0 +1,17 @@
+components:
+  schemas:
+    ILoginResponse:
+      type: object
+      properties:
+        id:
+          type: number
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string

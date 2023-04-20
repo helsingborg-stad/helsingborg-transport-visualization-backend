@@ -1,0 +1,42 @@
+components:
+  responses:
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Error message"
+    BadRequestError:
+      description: BadRequest
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Error message"
+              data:
+                type: object
+                description: "Object containing validation errors"
+    InternalError:
+      description: InternalError
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Error message"
+    Auth:
+      description: Auth responses used for login.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ILoginResponse'
+
