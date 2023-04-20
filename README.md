@@ -1,4 +1,4 @@
-# Backend typescript template
+# Transport Visualization Backend
 
 Environment:
 `.env` file is used by production and dev environment. `.env.test` is used for running tests.
