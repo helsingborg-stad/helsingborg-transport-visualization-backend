@@ -4,17 +4,14 @@ export type AuthDTO = {
   id: number;
   token?: string;
   userType: string;
+  freightCompanyId: number;
   email: string;
-  //   isBlocked: boolean;
-  //   exhibitorId?: number;
-  //   organiserGroupId?: number;
   createdAt: Date;
   updatedAt?: Date;
 };
 
 export interface IAuthRepo {
   findByEmail(email: string): Promise<IUser | null>;
-  save(user: IUser): Promise<IUser>;
-  //   findByForgotPasswordToken(token: string): Promise<IUser | null>;
   findById: (id: number) => Promise<IUser | null>;
+  save(user: IUser): Promise<IUser>;
 }

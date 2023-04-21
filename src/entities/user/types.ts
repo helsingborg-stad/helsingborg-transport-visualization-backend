@@ -10,9 +10,18 @@ export interface IUser {
   password?: string;
   forgotPasswordToken?: string;
   forgotPasswordTokenExpiration?: Date;
+  freightCompanyId?: number;
   createdAt: Date;
   updatedAt?: Date;
   buildToken: () => Promise<string>;
   setPassword: (text: string) => Promise<void>;
   isPasswordValid: (text: string) => Promise<boolean>;
 }
+
+export type UserTokenDestructured = {
+  id: number;
+  email: string;
+  userType: UserTypes;
+  freightCompanyId?: number;
+  createdAt: Date;
+};
