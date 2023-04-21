@@ -5,6 +5,7 @@ export const toAuthDTO = async (user: IUser, buildToken: boolean = true): Promis
   id: user.id,
   userType: user.userType,
   token: buildToken ? await user.buildToken() : undefined,
+  freightCompanyId: user.freightCompanyId,
   email: user.email,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt,
