@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { UserTypes, IUser } from './types';
 import { compareHashedValue, hashValue } from '@utils/hash';
 import { createJWT } from '@root/services/jwt';
+import { FreightCompany, IFreightCompany } from '../freightCompany';
 
 @Entity('users')
 export class User implements IUser {
@@ -31,6 +32,15 @@ export class User implements IUser {
 
   @UpdateDateColumn()
   updatedAt?: Date;
+
+  @Column({
+    type: 'integer',
+    nullable: true,
+  })
+  freightCompanyId?: number;
+
+  @ManyToOne(() => FreightCompany)
+  freightCompany?: IFreightCompany;
 
   constructor(email: string) {
     this.email = email;
