@@ -9,6 +9,14 @@ import { IUserService, UserService } from '@root/domains/users';
 export const userRoutes = () => {
   const router = Router();
   const userService: IUserService = new UserService();
+  router.get('/', isAuth, isAdmin, async (req: Request, res: Response) => {
+    try {
+      const users = await userService.getAllUsers();
+      return res.status(200).send(users);
+    } catch (e) {
+      return handleError(e, res);
+    }
+  });
   router.post(
     '/drivers',
     isAuth,
