@@ -54,3 +54,13 @@ components:
                 type: string
               updatedAt:
                 type: string
+    UserList:
+      description: List of users
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              allOf:
+                - $ref: '#/components/schemas/User'
+                - type: object

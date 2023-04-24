@@ -9,6 +9,24 @@ import { IUserService, UserService } from '@root/domains/users';
 export const userRoutes = () => {
   const router = Router();
   const userService: IUserService = new UserService();
+
+  /**
+   * @swagger
+   * /user:
+   *  post:
+   *    summary: Get all users
+   *    description: "Get all users, only admin can access this route"
+   *    tags:
+   *      - Users
+   *    consumes: application/json
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/UserList'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   *      401:
+   *        $ref: '#/components/responses/UnauthorizedError'
+   */
   router.get('/', isAuth, isAdmin, async (req: Request, res: Response) => {
     try {
       const users = await userService.getAllUsers();
@@ -17,6 +35,7 @@ export const userRoutes = () => {
       return handleError(e, res);
     }
   });
+
   router.post(
     '/drivers',
     isAuth,
