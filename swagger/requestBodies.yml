@@ -17,4 +17,14 @@ components:
                 description: User password
                 minimum: 6
                 example: An Example Password!1
+    FreightCompany:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                required: true
+                description: Name of freight company
+                example: DB Schenker
 

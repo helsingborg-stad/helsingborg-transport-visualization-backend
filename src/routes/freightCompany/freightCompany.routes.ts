@@ -10,6 +10,26 @@ export const freightCompanyRoutes = () => {
   const router = Router();
   const freightCompanyService: IFreightCompanyService = new FreightCompanyService();
 
+  /**
+   * @swagger
+   * /freight-company:
+   *  post:
+   *    summary: Add freight company
+   *    description: "Add new freight company"
+   *    tags:
+   *      - Freight Company
+   *    consumes: application/json
+   *    requestBody:
+   *      content:
+   *        $ref: '#/components/requestBodies/FreightCompany'
+   *    responses:
+   *      201:
+   *        $ref: '#/components/responses/AddFreightCompany'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   *      401:
+   *        $ref: '#/components/responses/UnauthorizedError'
+   */
   router.post(
     '/',
     isAuth,

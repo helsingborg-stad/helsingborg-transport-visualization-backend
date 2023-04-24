@@ -17,3 +17,4 @@ components:
           type: string
         updatedAt:
           type: string
+

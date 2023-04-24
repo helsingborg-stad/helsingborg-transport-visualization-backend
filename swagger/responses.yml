@@ -39,4 +39,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ILoginResponse'
-
+    AddFreightCompany:
+      description: Add freight company response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
