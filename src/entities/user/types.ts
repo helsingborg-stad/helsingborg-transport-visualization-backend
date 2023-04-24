@@ -25,3 +25,11 @@ export type UserTokenDestructured = {
   freightCompanyId?: number;
   createdAt: Date;
 };
+
+export type UserResponse = {
+  id: number;
+  userType: UserTypes;
+  email: string;
+  createdAt: Date;
+  updatedAt?: Date;
+}

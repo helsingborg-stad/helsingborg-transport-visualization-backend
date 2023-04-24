@@ -1,9 +1,9 @@
-import { IUser, User, UserTypes } from '@root/entities';
+import { IUser, User, UserTypes, UserResponse } from '@root/entities';
 import { IUserRepository, UserRepository } from '@root/repositories';
 import { AdminCreateType, DriverCreateType } from './types';
 
 export interface IUserService {
-  getAllUsers: () => Promise<IUser[]>;
+  getAllUsers: () => Promise<UserResponse[]>;
   createAdmin: (user: AdminCreateType) => Promise<IUser>;
   createDriver: (user: DriverCreateType) => Promise<IUser>;
 }
@@ -11,7 +11,7 @@ export interface IUserService {
 export class UserService implements IUserService {
   constructor(private repo: IUserRepository = new UserRepository()) {}
 
-  async getAllUsers(): Promise<IUser[]> {
+  async getAllUsers(): Promise<UserResponse[]> {
     return this.repo.getAllUsers();
   }
 

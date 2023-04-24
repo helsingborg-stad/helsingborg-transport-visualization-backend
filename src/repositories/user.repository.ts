@@ -1,12 +1,12 @@
 import { Repository } from 'typeorm';
-import { IUser, User } from '@root/entities';
+import { IUser, User, UserResponse } from '@root/entities';
 import { buildRepository } from '@root/services/database';
 
 export interface IUserRepository {
   findByEmail: (email: string) => Promise<IUser | null>;
   findById: (id: number) => Promise<IUser | null>;
   save: (user: IUser) => Promise<IUser>;
-  getAllUsers: () => Promise<IUser[]>;
+  getAllUsers: () => Promise<UserResponse[]>;
 }
 
 export class UserRepository implements IUserRepository {
@@ -24,7 +24,11 @@ export class UserRepository implements IUserRepository {
   async findById(id: number): Promise<IUser | null> {
     return this.repo.findOne({ where: { id } });
   }
-  async getAllUsers(): Promise<IUser[]> {
-    return this.repo.find();
+  async getAllUsers(): Promise<UserResponse[]> {
+    return this.repo.find(
+      {
+        select: ['id', 'userType', 'email', 'createdAt', 'updatedAt']
+      }
+    )
   }
 }
