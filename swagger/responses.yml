@@ -64,3 +64,11 @@ components:
               allOf:
                 - $ref: '#/components/schemas/User'
                 - type: object
+    SingleUser:
+      description: Single user response
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/User'
+              - type: object
