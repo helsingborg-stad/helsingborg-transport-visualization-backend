@@ -45,5 +45,19 @@ export const freightCompanyRoutes = () => {
     }
   );
 
+  router.get(
+    '/',
+    isAuth,
+    isAdmin,
+    async (req: Request, res: Response) => {
+      try {
+        const result = await freightCompanyService.getList();
+        return res.status(200).send(result);
+      } catch (e) {
+        return handleError(e, res);
+      }
+    }
+  );
+
   return router;
 };
