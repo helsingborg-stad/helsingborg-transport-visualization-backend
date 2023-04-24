@@ -10,7 +10,7 @@ const apiDocs = swaggerJSDoc({
       version: '1.0.0',
     },
   },
-  apis: ['./swagger/*.{json,yml}', './build/domains/**/*.{js,ts}'],
+  apis: ['./swagger/*.{json,yml}', './build/routes/**/*.{js,ts}'],
 });
 
 export default (app: Application) => {

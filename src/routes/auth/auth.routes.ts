@@ -7,6 +7,27 @@ import { handleError } from '@utils/handleError';
 export const authRoutes = () => {
   const router = Router();
   const authService: IAuthService = new AuthService();
+
+    /**
+   * @swagger
+   * /auth/login:
+   *  post:
+   *    summary: Login user
+   *    description: "Attempt to login the user with given credentials"
+   *    tags:
+   *      - Auth
+   *    consumes: application/json
+   *    requestBody:
+   *      content:
+   *        $ref: '#/components/requestBodies/Login'
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/Auth'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   *      401:
+   *        $ref: '#/components/responses/UnauthorizedError'
+   */
   router.post('/login', loginValidation, async (req: Request<null, null, LoginBody>, res: Response) => {
     try {
       const { email, password } = req.body;
