@@ -20,7 +20,7 @@ export const userRoutes = () => {
    *      - Users
    *    consumes: application/json
    *    responses:
-   *      201:
+   *      200:
    *        $ref: '#/components/responses/UserList'
    *      400:
    *        $ref: '#/components/responses/BadRequestError'
@@ -85,7 +85,7 @@ export const userRoutes = () => {
    *      content:
    *        $ref: '#/components/requestBodies/Admin'
    *    responses:
-   *      200:
+   *      201:
    *        $ref: '#/components/responses/SingleUser'
    *      400:
    *        $ref: '#/components/responses/BadRequestError'
