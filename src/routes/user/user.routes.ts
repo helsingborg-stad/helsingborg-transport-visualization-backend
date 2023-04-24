@@ -20,7 +20,7 @@ export const userRoutes = () => {
    *      - Users
    *    consumes: application/json
    *    responses:
-   *      200:
+   *      201:
    *        $ref: '#/components/responses/UserList'
    *      400:
    *        $ref: '#/components/responses/BadRequestError'
@@ -49,7 +49,7 @@ export const userRoutes = () => {
    *      content:
    *        $ref: '#/components/requestBodies/Driver'
    *    responses:
-   *      200:
+   *      201:
    *        $ref: '#/components/responses/SingleUser'
    *      400:
    *        $ref: '#/components/responses/BadRequestError'
