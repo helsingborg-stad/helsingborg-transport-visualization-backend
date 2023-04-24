@@ -52,7 +52,7 @@ export class FreightCompany1682061424879 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('users', 'freightCompanyId');
     await queryRunner.dropTable('freight_companies');
+    await queryRunner.dropForeignKey('users', 'freightCompanyId');
   }
 }
