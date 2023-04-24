@@ -5,11 +5,13 @@ components:
       properties:
         id:
           type: number
+        userType:
+          type: string
+        token: 
+          type: string
+        freightCompanyId:
+          type: number
         email:
-          type: string
-        firstName:
-          type: string
-        lastName:
           type: string
         createdAt:
           type: string

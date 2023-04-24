@@ -34,7 +34,7 @@ components:
                 type: string
                 description: "Error message"
     Auth:
-      description: Auth responses used for login.
+      description: Auth response used for login.
       content:
         application/json:
           schema:
