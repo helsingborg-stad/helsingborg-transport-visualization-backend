@@ -45,6 +45,23 @@ export const freightCompanyRoutes = () => {
     }
   );
 
+  /**
+   * @swagger
+   * /freight-company:
+   *  get:
+   *    summary: Get all freight companies
+   *    description: "Get list of all freight companies"
+   *    tags:
+   *      - Freight Company
+   *    consumes: application/json
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/FreightCompanyList'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   *      401:
+   *        $ref: '#/components/responses/UnauthorizedError'
+   */
   router.get(
     '/',
     isAuth,

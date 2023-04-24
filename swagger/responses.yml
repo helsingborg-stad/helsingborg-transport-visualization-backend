@@ -72,3 +72,13 @@ components:
             allOf:
               - $ref: '#/components/schemas/User'
               - type: object
+    FreightCompanyList:
+      description: List of freight companies
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              allOf:
+              - $ref: '#/components/schemas/FreightCompany'
+              - type: object
