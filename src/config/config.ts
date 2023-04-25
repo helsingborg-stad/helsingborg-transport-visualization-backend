@@ -6,4 +6,5 @@ export const config: IConfig = {
   token: process.env.TOKEN,
   frontendUrl: process.env.FRONTEND_URL,
   dbConnectionName: process.env.DB_CONNECTION_NAME,
+  sendgridKey: process.env.SENDGRID_KEY,
 };
