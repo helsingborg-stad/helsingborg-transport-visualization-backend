@@ -3,6 +3,8 @@ import { UserTypes, IUser } from './types';
 import { compareHashedValue, hashValue } from '@utils/hash';
 import { createJWT } from '@root/services/jwt';
 import { FreightCompany, IFreightCompany } from '../freightCompany';
+import randomTokenGenerator from '@utils/radomTokenGenerator';
+import { addDays } from '@utils/date';
 
 @Entity('users')
 export class User implements IUser {
@@ -53,6 +55,7 @@ export class User implements IUser {
   public async isPasswordValid(passwordToCompare: string): Promise<boolean> {
     return compareHashedValue(passwordToCompare, this.password);
   }
+
   public async buildToken(): Promise<string> {
     return createJWT({
       id: this.id,
@@ -60,5 +63,10 @@ export class User implements IUser {
       userType: this.userType,
       createdAt: this.createdAt,
     });
+  }
+
+  public setForgotPasswordToken(expirationDays: number = 1): void {
+    this.forgotPasswordToken = randomTokenGenerator();
+    this.forgotPasswordTokenExpiration = addDays(expirationDays);
   }
 }

@@ -14,6 +14,7 @@ export interface IUser {
   createdAt: Date;
   updatedAt?: Date;
   buildToken: () => Promise<string>;
+  setForgotPasswordToken: (expirationDays?: number) => void;
   setPassword: (text: string) => Promise<void>;
   isPasswordValid: (text: string) => Promise<boolean>;
 }
@@ -32,4 +33,4 @@ export type UserResponse = {
   email: string;
   createdAt: Date;
   updatedAt?: Date;
-}
+};

@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { loginValidation } from './validation';
-import { LoginBody } from './types';
+import { loginValidation, forgotPasswordValidation } from './validation';
+import { LoginBody, ForgotPasswordBody } from './types';
 import { AuthService, IAuthService } from '@domains/auth';
 import { handleError } from '@utils/handleError';
 
@@ -8,7 +8,7 @@ export const authRoutes = () => {
   const router = Router();
   const authService: IAuthService = new AuthService();
 
-    /**
+  /**
    * @swagger
    * /auth/login:
    *  post:
@@ -37,5 +37,38 @@ export const authRoutes = () => {
       return handleError(e, res);
     }
   });
+
+  /**
+   * @swagger
+   * /auth/forgot-password:
+   *  post:
+   *    summary: Send reset password email
+   *    description: "Send reset password email to the user with given email"
+   *    tags:
+   *      - Auth
+   *    consumes: application/json
+   *    requestBody:
+   *      content:
+   *        $ref: '#/components/requestBodies/ForgotPassword'
+   *    responses:
+   *      200:
+   *       $ref: '#/components/responses/OK'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   */
+  router.post(
+    '/forgot-password',
+    forgotPasswordValidation,
+    async (req: Request<null, null, ForgotPasswordBody>, res) => {
+      try {
+        const { email } = req.body;
+        await authService.forgotPassword(email);
+        return res.sendStatus(200);
+      } catch (e) {
+        return handleError(e, res);
+      }
+    }
+  );
+
   return router;
 };
