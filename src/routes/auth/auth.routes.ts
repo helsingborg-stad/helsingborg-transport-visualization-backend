@@ -55,8 +55,6 @@ export const authRoutes = () => {
    *       $ref: '#/components/responses/OK'
    *      400:
    *        $ref: '#/components/responses/BadRequestError'
-   *      401:
-   *        $ref: '#/components/responses/UnauthorizedError'
    */
   router.post(
     '/forgot-password',
