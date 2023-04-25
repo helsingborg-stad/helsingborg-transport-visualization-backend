@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { loginValidation, forgotPasswordValidation } from './validation';
-import { LoginBody, ForgotPasswordBody } from './types';
+import { loginValidation, forgotPasswordValidation, resetPasswordValidation } from './validation';
+import { LoginBody, ForgotPasswordBody, ResetPasswordBody } from './types';
 import { AuthService, IAuthService } from '@domains/auth';
 import { handleError } from '@utils/handleError';
 
@@ -69,6 +69,16 @@ export const authRoutes = () => {
       }
     }
   );
+
+  router.post('/reset-password', resetPasswordValidation, async (req: Request<null, null, ResetPasswordBody>, res) => {
+    try {
+      const { token, password } = req.body;
+      await authService.resetPassword(token, password);
+      return res.sendStatus(200);
+    } catch (e) {
+      return handleError(e, res);
+    }
+  });
 
   return router;
 };
