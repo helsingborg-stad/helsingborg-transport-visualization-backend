@@ -27,6 +27,31 @@ components:
               required: true
               description: User email
               example: test@email.com
+    Geolocation:
+      application/json:
+        schema:
+          type: object
+          properties:
+            latitude:
+              type: number
+              required: true
+              description: Latitude
+              example: 52.520008
+            longitude:
+              type: number
+              required: true
+              description: Longitude
+              example: 13.404954
+            heading:
+              type: number
+              required: true
+              description: Heading
+              example: 24.23
+            registeredAt:
+              type: string
+              required: true
+              description: Registered at
+              example: 2020-01-01T00:00:00.000Z
     ResetPassword:
       application/json:
         schema:
