@@ -9,6 +9,24 @@ import { IUserService, UserService } from '@root/domains/users';
 export const userRoutes = () => {
   const router = Router();
   const userService: IUserService = new UserService();
+
+  /**
+   * @swagger
+   * /user:
+   *  get:
+   *    summary: Get all users
+   *    description: "Get all users, only admin can access this route"
+   *    tags:
+   *      - Users
+   *    consumes: application/json
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/UserList'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   *      401:
+   *        $ref: '#/components/responses/UnauthorizedError'
+   */
   router.get('/', isAuth, isAdmin, async (req: Request, res: Response) => {
     try {
       const users = await userService.getAllUsers();
@@ -17,6 +35,27 @@ export const userRoutes = () => {
       return handleError(e, res);
     }
   });
+
+  /**
+   * @swagger
+   * /user/drivers:
+   *  post:
+   *    summary: Add driver user
+   *    description: "Add a driver to a freight company"
+   *    tags:
+   *      - Users
+   *    consumes: application/json
+   *    requestBody:
+   *      content:
+   *        $ref: '#/components/requestBodies/Driver'
+   *    responses:
+   *      201:
+   *        $ref: '#/components/responses/SingleUser'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   *      401:
+   *        $ref: '#/components/responses/UnauthorizedError'
+   */
   router.post(
     '/drivers',
     isAuth,
@@ -32,6 +71,27 @@ export const userRoutes = () => {
       }
     }
   );
+
+  /**
+   * @swagger
+   * /user/admins:
+   *  post:
+   *    summary: Add admin user
+   *    description: "Add a admin user, freight company ID is optional"
+   *    tags:
+   *      - Users
+   *    consumes: application/json
+   *    requestBody:
+   *      content:
+   *        $ref: '#/components/requestBodies/Admin'
+   *    responses:
+   *      201:
+   *        $ref: '#/components/responses/SingleUser'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   *      401:
+   *        $ref: '#/components/responses/UnauthorizedError'
+   */
   router.post(
     '/admins',
     isAuth,

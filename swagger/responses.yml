@@ -1,5 +1,7 @@
 components:
   responses:
+    OK:
+      description: OK
     UnauthorizedError:
       description: Unauthorized
       content:
@@ -9,7 +11,7 @@ components:
             properties:
               message:
                 type: string
-                description: "Error message"
+                description: 'Error message'
     BadRequestError:
       description: BadRequest
       content:
@@ -19,10 +21,10 @@ components:
             properties:
               message:
                 type: string
-                description: "Error message"
+                description: 'Error message'
               data:
                 type: object
-                description: "Object containing validation errors"
+                description: 'Object containing validation errors'
     InternalError:
       description: InternalError
       content:
@@ -32,11 +34,53 @@ components:
             properties:
               message:
                 type: string
-                description: "Error message"
+                description: 'Error message'
     Auth:
-      description: Auth responses used for login.
+      description: Auth response used for login.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ILoginResponse'
-
+    AddFreightCompany:
+      description: Add freight company response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+    UserList:
+      description: List of users
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              allOf:
+                - $ref: '#/components/schemas/User'
+                - type: object
+    SingleUser:
+      description: Single user response
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/User'
+              - type: object
+    FreightCompanyList:
+      description: List of freight companies
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              allOf:
+                - $ref: '#/components/schemas/FreightCompany'
+                - type: object

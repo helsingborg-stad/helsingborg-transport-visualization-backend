@@ -1,3 +1,81 @@
 components:
   requestBodies:
-
+    Login:
+      application/json:
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              required: true
+              description: User email
+              example: user+1@admin.com
+            password:
+              type: string
+              required: true
+              format: password
+              description: User password
+              minimum: 6
+              example: An Example Password!1
+    ForgotPassword:
+      application/json:
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              required: true
+              description: User email
+              example: test@email.com
+    FreightCompany:
+      application/json:
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+              required: true
+              description: Name of freight company
+              example: DB Schenker
+    Driver:
+      application/json:
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              required: true
+              description: User email
+              example: user+1@admin.com
+            password:
+              type: string
+              required: true
+              format: password
+              description: User password
+              minimum: 6
+              example: An Example Password!1
+            freightCompanyId:
+              type: number
+              required: true
+              description: Freight company ID
+    Admin:
+      application/json:
+        schema:
+          type: object
+          properties:
+            email:
+              type: string
+              required: true
+              description: User email
+              example: user+1@admin.com
+            password:
+              type: string
+              required: true
+              format: password
+              description: User password
+              minimum: 6
+              example: An Example Password!1
+            freightCompanyId:
+              type: number
+              required: false
+              description: Freight company ID (optional)

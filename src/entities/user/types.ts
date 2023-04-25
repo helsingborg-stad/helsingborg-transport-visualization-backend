@@ -14,6 +14,7 @@ export interface IUser {
   createdAt: Date;
   updatedAt?: Date;
   buildToken: () => Promise<string>;
+  setForgotPasswordToken: (expirationDays?: number) => void;
   setPassword: (text: string) => Promise<void>;
   isPasswordValid: (text: string) => Promise<boolean>;
 }
@@ -24,4 +25,12 @@ export type UserTokenDestructured = {
   userType: UserTypes;
   freightCompanyId?: number;
   createdAt: Date;
+};
+
+export type UserResponse = {
+  id: number;
+  userType: UserTypes;
+  email: string;
+  createdAt: Date;
+  updatedAt?: Date;
 };

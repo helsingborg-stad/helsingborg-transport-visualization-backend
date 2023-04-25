@@ -34,7 +34,7 @@ Migrations:
 
 ```shell
 # create new migration in the migrations folder
-npx typeorm migration:create -n UserModel
+npx typeorm migration:create <name_of_migration>
 
 # migrate pending migrations - default connection
 npm run migrate:run
