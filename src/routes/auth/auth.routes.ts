@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { loginValidation, forgotPasswordValidation } from './validation';
-import { LoginBody, ForgotPasswordBody } from './types';
+import { loginValidation, forgotPasswordValidation, resetPasswordValidation } from './validation';
+import { LoginBody, ForgotPasswordBody, ResetPasswordBody } from './types';
 import { AuthService, IAuthService } from '@domains/auth';
 import { handleError } from '@utils/handleError';
 
@@ -69,6 +69,34 @@ export const authRoutes = () => {
       }
     }
   );
+
+  /**
+   * @swagger
+   * /auth/reset-password:
+   *  post:
+   *    summary: Reset password
+   *    description: "Reset password for the user with given token"
+   *    tags:
+   *      - Auth
+   *    consumes: application/json
+   *    requestBody:
+   *      content:
+   *        $ref: '#/components/requestBodies/ResetPassword'
+   *    responses:
+   *      200:
+   *       $ref: '#/components/responses/OK'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   */
+  router.post('/reset-password', resetPasswordValidation, async (req: Request<null, null, ResetPasswordBody>, res) => {
+    try {
+      const { token, password } = req.body;
+      await authService.resetPassword(token, password);
+      return res.sendStatus(200);
+    } catch (e) {
+      return handleError(e, res);
+    }
+  });
 
   return router;
 };

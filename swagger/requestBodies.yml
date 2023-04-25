@@ -27,6 +27,30 @@ components:
               required: true
               description: User email
               example: test@email.com
+    ResetPassword:
+      application/json:
+        schema:
+          type: object
+          properties:
+            token:
+              type: string
+              required: true
+              description: Reset password token
+              example: a7b32243-4060-4ae4-af5e-0f35cf2b7659
+            password:
+              type: string
+              required: true
+              format: password
+              description: User password
+              minimum: 6
+              example: password
+            confirmedPassword:
+              type: string
+              required: true
+              format: password
+              description: User confirmed-password
+              minimum: 6
+              example: password
     FreightCompany:
       application/json:
         schema:

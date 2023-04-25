@@ -17,6 +17,7 @@ export interface IUser {
   setForgotPasswordToken: (expirationDays?: number) => void;
   setPassword: (text: string) => Promise<void>;
   isPasswordValid: (text: string) => Promise<boolean>;
+  clearForgotPasswordToken: () => void;
 }
 
 export type UserTokenDestructured = {
