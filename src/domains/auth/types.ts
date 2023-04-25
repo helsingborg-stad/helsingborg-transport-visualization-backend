@@ -13,5 +13,6 @@ export type AuthDTO = {
 export interface IAuthRepo {
   findByEmail(email: string): Promise<IUser | null>;
   findById: (id: number) => Promise<IUser | null>;
+  findByForgotPasswordToken(token: string): Promise<IUser | null>;
   save(user: IUser): Promise<IUser>;
 }
