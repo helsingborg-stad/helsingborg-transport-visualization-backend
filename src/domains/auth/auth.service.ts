@@ -10,7 +10,7 @@ import { buildForgotPasswordUrl } from '@utils/getForgotPasswordUrl';
 export interface IAuthService {
   login(email: string, password: string): Promise<AuthDTO | null>;
   forgotPassword(email: string): Promise<void>;
-  //   resetPassword(token: string, password: string): Promise<void>;
+  resetPassword(token: string, password: string): Promise<void>;
   //   getMe(id: number): Promise<AuthDTO>;
 }
 
@@ -29,6 +29,18 @@ export class AuthService implements IAuthService {
       throw new StatusError(401, 'Invalid login');
     }
     return toAuthDTO(user);
+  }
+
+  async resetPassword(token: string, password: string): Promise<void> {
+    const user = await this.authRepo.findByForgotPasswordToken(token);
+
+    if (!user) {
+      throw new StatusError(400, 'Expired or invalid token.');
+    }
+
+    await user.setPassword(password);
+    user.clearForgotPasswordToken();
+    await this.authRepo.save(user);
   }
 
   async forgotPassword(email: string): Promise<void> {
