@@ -69,4 +69,9 @@ export class User implements IUser {
     this.forgotPasswordToken = randomTokenGenerator();
     this.forgotPasswordTokenExpiration = addDays(expirationDays);
   }
+
+  public clearForgotPasswordToken(): void {
+    this.forgotPasswordToken = null;
+    this.forgotPasswordTokenExpiration = null;
+  }
 }

@@ -1,10 +1,11 @@
-import { Repository } from 'typeorm';
+import { Repository, MoreThanOrEqual } from 'typeorm';
 import { IUser, User, UserResponse } from '@root/entities';
 import { buildRepository } from '@root/services/database';
 
 export interface IUserRepository {
   findByEmail: (email: string) => Promise<IUser | null>;
   findById: (id: number) => Promise<IUser | null>;
+  findByForgotPasswordToken: (token: string) => Promise<IUser | null>;
   save: (user: IUser) => Promise<IUser>;
   getAllUsers: () => Promise<UserResponse[]>;
 }
@@ -25,10 +26,17 @@ export class UserRepository implements IUserRepository {
     return this.repo.findOne({ where: { id } });
   }
   async getAllUsers(): Promise<UserResponse[]> {
-    return this.repo.find(
-      {
-        select: ['id', 'userType', 'email', 'createdAt', 'updatedAt']
-      }
-    )
+    return this.repo.find({
+      select: ['id', 'userType', 'email', 'createdAt', 'updatedAt'],
+    });
+  }
+
+  async findByForgotPasswordToken(token: string): Promise<IUser | null> {
+    return this.repo.findOne({
+      where: {
+        forgotPasswordToken: token,
+        forgotPasswordTokenExpiration: MoreThanOrEqual(new Date()),
+      },
+    });
   }
 }
