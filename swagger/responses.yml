@@ -1,5 +1,7 @@
 components:
   responses:
+    OK:
+      description: OK
     UnauthorizedError:
       description: Unauthorized
       content:
@@ -9,7 +11,7 @@ components:
             properties:
               message:
                 type: string
-                description: "Error message"
+                description: 'Error message'
     BadRequestError:
       description: BadRequest
       content:
@@ -19,10 +21,10 @@ components:
             properties:
               message:
                 type: string
-                description: "Error message"
+                description: 'Error message'
               data:
                 type: object
-                description: "Object containing validation errors"
+                description: 'Object containing validation errors'
     InternalError:
       description: InternalError
       content:
@@ -32,7 +34,7 @@ components:
             properties:
               message:
                 type: string
-                description: "Error message"
+                description: 'Error message'
     Auth:
       description: Auth response used for login.
       content:
@@ -80,5 +82,5 @@ components:
             type: array
             items:
               allOf:
-              - $ref: '#/components/schemas/FreightCompany'
-              - type: object
+                - $ref: '#/components/schemas/FreightCompany'
+                - type: object

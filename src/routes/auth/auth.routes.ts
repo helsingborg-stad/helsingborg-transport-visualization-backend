@@ -38,6 +38,26 @@ export const authRoutes = () => {
     }
   });
 
+  /**
+   * @swagger
+   * /auth/forgot-password:
+   *  post:
+   *    summary: Send reset password email
+   *    description: "Send reset password email to the user with given email"
+   *    tags:
+   *      - Auth
+   *    consumes: application/json
+   *    requestBody:
+   *      content:
+   *        $ref: '#/components/requestBodies/ForgotPassword'
+   *    responses:
+   *      200:
+   *       $ref: '#/components/responses/OK'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   *      401:
+   *        $ref: '#/components/responses/UnauthorizedError'
+   */
   router.post(
     '/forgot-password',
     forgotPasswordValidation,
