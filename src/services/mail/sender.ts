@@ -29,5 +29,3 @@ export class MailSender implements IMailSender {
     logger.debug('Sending email', mail);
   }
 }
-
-export const MailService = new MailSender();
