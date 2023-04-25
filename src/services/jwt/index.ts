@@ -1,7 +1,7 @@
 import JWT from 'jsonwebtoken';
 import { config } from '@config';
 
-const expiresIn = '3h';
+const expiresIn = '90d';
 
 /**
  * Creates a JWT token out of given payload.
