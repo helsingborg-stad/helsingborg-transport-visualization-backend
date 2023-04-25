@@ -11,6 +11,26 @@ export const geolocationRoutes = () => {
   const router = Router();
   const geolocationService: IGeolocationService = new GeolocationService();
 
+  /**
+   * @swagger
+   * /geolocation:
+   *  post:
+   *    summary: Log geolocation
+   *    description: "Log geolocation of a driver"
+   *    tags:
+   *      - Geolocation
+   *    consumes: application/json
+   *    requestBody:
+   *      content:
+   *        $ref: '#/components/requestBodies/Geolocation'
+   *    responses:
+   *      201:
+   *        $ref: '#/components/responses/Geolocation'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   *      401:
+   *        $ref: '#/components/responses/UnauthorizedError'
+   */
   router.post(
     '/',
     isAuth,
