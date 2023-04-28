@@ -1,11 +1,20 @@
 import { validationMiddleware } from '@root/utils/validationMiddleware';
 
-export const loginValidation = validationMiddleware({
-  identifier: {
+export const signupValidation = validationMiddleware({
+  orgNumber: {
     presence: true,
     type: 'string',
   },
+  name: {
+    presence: true,
+    type: 'string',
+  },
+  email: {
+    presence: true,
+    email: true,
+  },
   password: {
+    presence: true,
     format: {
       pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{10,}$/,
       message:
@@ -13,6 +22,7 @@ export const loginValidation = validationMiddleware({
     },
   },
   pinCode: {
+    presence: true,
     format: {
       pattern: /^(?!.*(\d)\1{2})(?!.*(\d)(\d)\2{2})[0-9]{6}$/,
       message: 'must be 6 digits, max 2 repeating after each other, min 3 unique digits',

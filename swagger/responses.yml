@@ -2,6 +2,16 @@ components:
   responses:
     OK:
       description: OK
+    ConflictError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: 'Error message'
     UnauthorizedError:
       description: Unauthorized
       content:

@@ -1,2 +1,1 @@
-export * from './user.seed';
-export * from './freightCompany.seed';
+export * from './organisation.seed';

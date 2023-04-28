@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { loginValidation, forgotPasswordValidation, resetPasswordValidation } from './validation';
-import { LoginBody, ForgotPasswordBody, ResetPasswordBody } from './types';
+import { loginValidation, forgotPasswordValidation, resetPasswordValidation, signupValidation } from './validation';
+import { LoginBody, ForgotPasswordBody, ResetPasswordBody, SignupBody } from './types';
 import { AuthService, IAuthService } from '@domains/auth';
 import { handleError } from '@utils/handleError';
 
@@ -12,7 +12,7 @@ export const authRoutes = () => {
    * @swagger
    * /auth/login:
    *  post:
-   *    summary: Login user
+   *    summary: Login organisation or driver
    *    description: "Attempt to login the user with given credentials"
    *    tags:
    *      - Auth
@@ -30,9 +30,40 @@ export const authRoutes = () => {
    */
   router.post('/login', loginValidation, async (req: Request<null, null, LoginBody>, res: Response) => {
     try {
-      const { email, password } = req.body;
-      const response = await authService.login(email, password);
+      const { identifier, password, pinCode } = req.body;
+      const response = password
+        ? await authService.loginByPassword(identifier, password)
+        : await authService.loginByPinCode(identifier, pinCode);
       res.status(200).send(response);
+    } catch (e) {
+      return handleError(e, res);
+    }
+  });
+
+  /**
+   * @swagger
+   * /auth/signup:
+   *  post:
+   *    summary: Register a organisation
+   *    description: "Attempt to register a organisation with given credentials"
+   *    tags:
+   *      - Auth
+   *    consumes: application/json
+   *    requestBody:
+   *      content:
+   *        $ref: '#/components/requestBodies/Signup'
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/Auth'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   *      409:
+   *        $ref: '#/components/responses/ConflictError'
+   */
+  router.post('/signup', signupValidation, async (req: Request<null, null, SignupBody>, res: Response) => {
+    try {
+      const response = await authService.signup(req.body);
+      res.status(201).send(response);
     } catch (e) {
       return handleError(e, res);
     }
