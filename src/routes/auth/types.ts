@@ -5,7 +5,7 @@ export type LoginBody = {
 };
 
 export type SignupBody = {
-  id: string;
+  orgNumber: string;
   name: string;
   email: string;
   password: string;

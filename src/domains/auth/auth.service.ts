@@ -22,7 +22,7 @@ export class AuthService implements IAuthService {
     private mailSender: IMailSender = new MailSender()
   ) {}
   async loginByPassword(identifier: string, password: string): Promise<AuthDTO> {
-    const organisation = await this.authRepo.findByIdOrEmail(identifier);
+    const organisation = await this.authRepo.findByOrgNumberOrEmail(identifier);
 
     if (!organisation) {
       throw new StatusError(401, 'Invalid login');
@@ -37,7 +37,7 @@ export class AuthService implements IAuthService {
   }
 
   async loginByPinCode(orgNumber: string, pinCode: string): Promise<AuthDTO> {
-    const organisation = await this.authRepo.findById(orgNumber);
+    const organisation = await this.authRepo.findByOrgNumber(orgNumber);
 
     if (!organisation) {
       throw new StatusError(401, 'Invalid login');
@@ -84,14 +84,14 @@ export class AuthService implements IAuthService {
   }
 
   async signup(signupBody: SignupBody): Promise<AuthDTO> {
-    const { id, name, email, password, pinCode } = signupBody;
-    const organisation = await this.authRepo.findByIdOrEmail(id);
+    const { orgNumber, name, email, password, pinCode } = signupBody;
+    const organisation = await this.authRepo.findByOrgNumberOrEmail(orgNumber);
 
     if (organisation) {
       throw new StatusError(409, 'Organisation already exists');
     }
 
-    const newOrganisation = new Organisation(id, email, name);
+    const newOrganisation = new Organisation(orgNumber, email, name);
     await newOrganisation.setPassword(password);
     await newOrganisation.setPinCode(pinCode);
 

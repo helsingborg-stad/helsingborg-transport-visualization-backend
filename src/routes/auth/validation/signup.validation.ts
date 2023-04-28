@@ -1,7 +1,7 @@
 import { validationMiddleware } from '@root/utils/validationMiddleware';
 
 export const signupValidation = validationMiddleware({
-  id: {
+  orgNumber: {
     presence: true,
     type: 'string',
   },

@@ -7,10 +7,13 @@ import { addDays } from '@utils/date';
 
 @Entity('organisations')
 export class Organisation implements IOrganisation {
-  @PrimaryColumn()
+  @PrimaryColumn('uuid', { generated: 'uuid' })
   id: string;
 
-  @Column()
+  @Column({ unique: true })
+  orgNumber: string;
+
+  @Column({ unique: true })
   email: string;
 
   @Column()
@@ -34,8 +37,8 @@ export class Organisation implements IOrganisation {
   @UpdateDateColumn()
   updatedAt?: Date;
 
-  constructor(id: string, email: string, name: string) {
-    this.id = id;
+  constructor(orgNumber: string, email: string, name: string) {
+    this.orgNumber = orgNumber;
     this.email = email;
     this.name = name;
   }
@@ -59,6 +62,7 @@ export class Organisation implements IOrganisation {
   public async buildToken(): Promise<string> {
     return createJWT({
       id: this.id,
+      orgNumber: this.orgNumber,
       email: this.email,
       name: this.name,
       createdAt: this.createdAt,

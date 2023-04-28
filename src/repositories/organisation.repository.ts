@@ -5,7 +5,8 @@ import { buildRepository } from '@root/services/database';
 export interface IOrganisationRepository {
   findByEmail: (email: string) => Promise<IOrganisation | null>;
   findById: (id: string) => Promise<IOrganisation | null>;
-  findByIdOrEmail: (identifier: string) => Promise<IOrganisation | null>;
+  findByOrgNumber: (orgNumber: string) => Promise<IOrganisation | null>;
+  findByOrgNumberOrEmail: (identifier: string) => Promise<IOrganisation | null>;
   findByForgotPasswordToken: (token: string) => Promise<IOrganisation | null>;
   save: (organisation: IOrganisation) => Promise<IOrganisation>;
   getAllOrganisations: () => Promise<OrganisationResponse[]>;
@@ -20,13 +21,19 @@ export class OrganisationRepository implements IOrganisationRepository {
     });
   }
 
+  async findByOrgNumber(orgNumber: string): Promise<IOrganisation | null> {
+    return this.repo.findOne({
+      where: { orgNumber },
+    });
+  }
+
   async findById(id: string): Promise<IOrganisation | null> {
     return this.repo.findOne({ where: { id } });
   }
 
-  async findByIdOrEmail(identifier: string): Promise<IOrganisation | null> {
+  async findByOrgNumberOrEmail(identifier: string): Promise<IOrganisation | null> {
     return this.repo.findOne({
-      where: [{ id: identifier }, { email: identifier.toLowerCase() }],
+      where: [{ orgNumber: identifier }, { email: identifier.toLowerCase() }],
     });
   }
 

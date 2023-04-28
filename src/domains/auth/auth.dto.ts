@@ -3,6 +3,7 @@ import { AuthDTO } from './types';
 
 export const toAuthDTO = async (organisation: IOrganisation, buildToken: boolean = true): Promise<AuthDTO> => ({
   id: organisation.id,
+  orgNumber: organisation.orgNumber,
   email: organisation.email,
   name: organisation.name,
   token: buildToken ? await organisation.buildToken() : undefined,
