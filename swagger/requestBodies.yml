@@ -13,16 +13,14 @@ components:
             password:
               type: string
               required: false
-              format: password
+              pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{10,}$/'
               description: Organisations' password
-              minimum: 10
-              example: Password00
+              example: Pa$sword00
             pinCode:
               type: string
               required: false
-              format: password
+              pattern: '/^(?!.*(\d)\1{2})(?!.*(\d)(\d)\2{2})[0-9]{6}$/'
               description: Organisations' pin code
-              minimum: 6
               example: 123456
     Signup:
       application/json:
@@ -47,16 +45,14 @@ components:
             password:
               type: string
               required: true
-              format: password
+              pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{10,}$/'
               description: Organisations' password
-              minimum: 10
-              example: Password00
+              example: Pa$sword00
             pinCode:
               type: string
               required: true
-              format: password
+              pattern: '/^(?!.*(\d)\1{2})(?!.*(\d)(\d)\2{2})[0-9]{6}$/'
               description: Organisations' pin code
-              minimum: 6
               example: 123456
     ForgotPassword:
       application/json:
