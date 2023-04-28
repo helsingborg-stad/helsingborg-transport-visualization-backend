@@ -1,39 +1,47 @@
-/* eslint-disable class-methods-use-this */
 import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
-import { UserTypes } from '@root/entities';
 
-export class UserModel1633352340207 implements MigrationInterface {
+export class Organisation1682513721517 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    //create a extension for uuid generation
+    await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
     await queryRunner.createTable(
       new Table({
-        name: 'users',
+        name: 'organisations',
         columns: [
           {
             name: 'id',
-            type: 'integer',
+            type: 'uuid',
             isPrimary: true,
+            isNullable: false,
             isGenerated: true,
-            generationStrategy: 'increment',
+            generationStrategy: 'uuid',
           },
           {
-            name: 'userType',
-            type: 'enum',
-            enum: [UserTypes.ADMIN, UserTypes.DRIVER],
+            name: 'orgNumber',
+            type: 'varchar',
             isNullable: false,
+            isUnique: true,
           },
           {
             name: 'email',
             type: 'varchar',
+            isNullable: false,
+            isUnique: true,
+          },
+          {
+            name: 'name',
+            type: 'varchar',
+            isNullable: false,
           },
           {
             name: 'password',
             type: 'varchar',
-            isNullable: true,
+            isNullable: false,
           },
           {
-            name: 'invitationConfirmed',
-            type: 'bool',
-            default: false,
+            name: 'pinCode',
+            type: 'varchar',
+            isNullable: false,
           },
           {
             name: 'forgotPasswordToken',
@@ -43,16 +51,6 @@ export class UserModel1633352340207 implements MigrationInterface {
           {
             name: 'forgotPasswordTokenExpiration',
             type: 'timestamp',
-            isNullable: true,
-          },
-          {
-            name: 'firstName',
-            type: 'varchar',
-            isNullable: true,
-          },
-          {
-            name: 'lastName',
-            type: 'varchar',
             isNullable: true,
           },
           {
@@ -70,16 +68,17 @@ export class UserModel1633352340207 implements MigrationInterface {
       true
     );
     await queryRunner.createIndex(
-      'users',
+      'organisations',
       new TableIndex({
-        name: 'user_email_index',
+        name: 'UX_organisation_email',
         columnNames: ['email'],
       })
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex('users', 'user_email_index');
-    await queryRunner.dropTable('users');
+    await queryRunner.dropIndex('organisations', 'UX_organisation_email');
+    await queryRunner.dropTable('organisations');
+    await queryRunner.query('DROP EXTENSION IF EXISTS "uuid-ossp";');
   }
 }

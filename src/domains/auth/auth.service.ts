@@ -1,64 +1,100 @@
 import { AuthDTO } from './types';
 import { IAuthRepo } from './types';
-import { UserRepository } from '@root/repositories';
+import { OrganisationRepository } from '@root/repositories';
 import { toAuthDTO } from './auth.dto';
 import StatusError from '@root/utils/statusError';
 import { ForgotPasswordMail } from './mail/forgotPassword';
 import { IMailSender, MailSender } from '@services/mail';
-import { IUser } from '@root/entities';
+import { IOrganisation, Organisation } from '@root/entities';
 import { buildForgotPasswordUrl } from '@utils/getForgotPasswordUrl';
+import { SignupBody } from '@root/routes/auth/types';
 export interface IAuthService {
-  login(email: string, password: string): Promise<AuthDTO | null>;
+  loginByPassword(identifier: string, password: string): Promise<AuthDTO | null>;
+  loginByPinCode(orgNumber: string, pinCode: string): Promise<AuthDTO | null>;
   forgotPassword(email: string): Promise<void>;
   resetPassword(token: string, password: string): Promise<void>;
-  //   getMe(id: number): Promise<AuthDTO>;
+  signup(signupBody: SignupBody): Promise<AuthDTO>;
 }
 
 export class AuthService implements IAuthService {
-  constructor(private authRepo: IAuthRepo = new UserRepository(), private mailSender: IMailSender = new MailSender()) {}
-  async login(email: string, password: string): Promise<AuthDTO> {
-    const user = await this.authRepo.findByEmail(email);
+  constructor(
+    private authRepo: IAuthRepo = new OrganisationRepository(),
+    private mailSender: IMailSender = new MailSender()
+  ) {}
+  async loginByPassword(identifier: string, password: string): Promise<AuthDTO> {
+    const organisation = await this.authRepo.findByOrgNumberOrEmail(identifier);
 
-    if (!user) {
+    if (!organisation) {
       throw new StatusError(401, 'Invalid login');
     }
 
-    const isPasswordValid = await user.isPasswordValid(password);
+    const isPasswordValid = await organisation.isPasswordValid(password);
 
     if (!isPasswordValid) {
       throw new StatusError(401, 'Invalid login');
     }
-    return toAuthDTO(user);
+    return toAuthDTO(organisation);
+  }
+
+  async loginByPinCode(orgNumber: string, pinCode: string): Promise<AuthDTO> {
+    const organisation = await this.authRepo.findByOrgNumber(orgNumber);
+
+    if (!organisation) {
+      throw new StatusError(401, 'Invalid login');
+    }
+
+    const isPinCodeValid = await organisation.isPinCodeValid(pinCode);
+
+    if (!isPinCodeValid) {
+      throw new StatusError(401, 'Invalid login');
+    }
+
+    return toAuthDTO(organisation);
   }
 
   async resetPassword(token: string, password: string): Promise<void> {
-    const user = await this.authRepo.findByForgotPasswordToken(token);
+    const organisation = await this.authRepo.findByForgotPasswordToken(token);
 
-    if (!user) {
+    if (!organisation) {
       throw new StatusError(400, 'Expired or invalid token.');
     }
 
-    await user.setPassword(password);
-    user.clearForgotPasswordToken();
-    await this.authRepo.save(user);
+    await organisation.setPassword(password);
+    organisation.clearForgotPasswordToken();
+    await this.authRepo.save(organisation);
   }
 
   async forgotPassword(email: string): Promise<void> {
-    const user = await this.authRepo.findByEmail(email);
+    const organisation = await this.authRepo.findByEmail(email);
 
-    if (!user) {
+    if (!organisation) {
       return;
     }
 
-    user.setForgotPasswordToken();
-    await this.authRepo.save(user);
-    await this.sendForgotPasswordEmail(user);
+    organisation.setForgotPasswordToken();
+    await this.authRepo.save(organisation);
+    await this.sendForgotPasswordEmail(organisation);
   }
 
-  async sendForgotPasswordEmail(user: IUser): Promise<void> {
-    const email = new ForgotPasswordMail(user.email);
-    const url = buildForgotPasswordUrl(user.forgotPasswordToken);
+  async sendForgotPasswordEmail(organisation: IOrganisation): Promise<void> {
+    const email = new ForgotPasswordMail(organisation.email);
+    const url = buildForgotPasswordUrl(organisation.forgotPasswordToken);
     email.setParams({ url });
     return this.mailSender.sendEmail(email);
+  }
+
+  async signup(signupBody: SignupBody): Promise<AuthDTO> {
+    const { orgNumber, name, email, password, pinCode } = signupBody;
+    const organisation = await this.authRepo.findByOrgNumberOrEmail(orgNumber);
+
+    if (organisation) {
+      throw new StatusError(409, 'Organisation already exists');
+    }
+
+    const newOrganisation = new Organisation(orgNumber, email, name);
+    await newOrganisation.setPassword(password);
+    await newOrganisation.setPinCode(pinCode);
+
+    return toAuthDTO(await this.authRepo.save(newOrganisation));
   }
 }

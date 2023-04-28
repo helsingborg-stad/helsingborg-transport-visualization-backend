@@ -4,14 +4,12 @@ components:
       type: object
       properties:
         id:
-          type: number
-        userType:
           type: string
-        token: 
-          type: string
-        freightCompanyId:
-          type: number
         email:
+          type: string
+        name:
+          type: string
+        token:
           type: string
         createdAt:
           type: string
@@ -43,4 +41,3 @@ components:
           type: string
         updatedAt:
           type: string
-

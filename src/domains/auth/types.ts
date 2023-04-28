@@ -1,18 +1,20 @@
-import { IUser } from '@root/entities';
+import { IOrganisation } from '@root/entities';
 
 export type AuthDTO = {
-  id: number;
-  token?: string;
-  userType: string;
-  freightCompanyId: number;
+  id: string;
+  orgNumber: string;
+  name: string;
   email: string;
+  token?: string;
   createdAt: Date;
   updatedAt?: Date;
 };
 
 export interface IAuthRepo {
-  findByEmail(email: string): Promise<IUser | null>;
-  findById: (id: number) => Promise<IUser | null>;
-  findByForgotPasswordToken(token: string): Promise<IUser | null>;
-  save(user: IUser): Promise<IUser>;
+  findByOrgNumberOrEmail(identifier: string): Promise<IOrganisation | null>;
+  findByEmail: (email: string) => Promise<IOrganisation | null>;
+  findById: (id: string) => Promise<IOrganisation | null>;
+  findByOrgNumber: (orgNumber: string) => Promise<IOrganisation | null>;
+  findByForgotPasswordToken(token: string): Promise<IOrganisation | null>;
+  save(organisation: IOrganisation): Promise<IOrganisation>;
 }
