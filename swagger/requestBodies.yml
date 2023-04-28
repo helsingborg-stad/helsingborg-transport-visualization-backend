@@ -5,18 +5,59 @@ components:
         schema:
           type: object
           properties:
+            identifier:
+              type: string
+              required: true
+              description: Can either be org-id or email
+              example: test@email.com
+            password:
+              type: string
+              required: false
+              format: password
+              description: Organisations' password
+              minimum: 10
+              example: Password00
+            pinCode:
+              type: string
+              required: false
+              format: password
+              description: Organisations' pin code
+              minimum: 6
+              example: 123456
+    Signup:
+      application/json:
+        schema:
+          type: object
+          properties:
+            id:
+              type: string
+              required: true
+              description: Organisations' id
+              example: 4494327523
+            name:
+              type: string
+              required: true
+              description: Organisations' name
+              example: Test AB
             email:
               type: string
               required: true
-              description: User email
-              example: user+1@admin.com
+              description: Organisations' email
+              example: test@email.com
             password:
               type: string
               required: true
               format: password
-              description: User password
+              description: Organisations' password
+              minimum: 10
+              example: Password00
+            pinCode:
+              type: string
+              required: true
+              format: password
+              description: Organisations' pin code
               minimum: 6
-              example: An Example Password!1
+              example: 123456
     ForgotPassword:
       application/json:
         schema:
