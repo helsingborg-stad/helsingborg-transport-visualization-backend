@@ -43,7 +43,7 @@ export class OrganisationRepository implements IOrganisationRepository {
 
   async getAllOrganisations(): Promise<OrganisationResponse[]> {
     return this.repo.find({
-      select: ['id', 'name', 'email', 'createdAt', 'updatedAt'],
+      select: ['id', 'orgNumber', 'name', 'email', 'createdAt', 'updatedAt'],
     });
   }
 
