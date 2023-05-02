@@ -22,6 +22,73 @@ components:
               pattern: '/^(?!.*(\d)\1{2})(?!.*(\d)(\d)\2{2})[0-9]{6}$/'
               description: Organisations' pin code
               example: 123456
+
+    FeatureCollection:
+      application/json:
+        schema:
+          type: object
+          properties:
+            type:
+              type: string
+              required: true
+              description: Type of feature collection
+              example: FeatureCollection
+            features:
+              type: array
+              required: true
+              description: Array of features
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    required: true
+                    description: Type of feature
+                    example: Feature
+                  geometry:
+                    type: object
+                    required: true
+                    description: Geometry of feature
+                    properties:
+                      type:
+                        type: string
+                        required: true
+                        description: Type of geometry
+                        example: Point
+                      coordinates:
+                        type: array
+                        required: true
+                        description: Array of coordinates
+                        items:
+                          type: number
+                          example: 13.404954
+                  properties:
+                    type: object
+                    required: true
+                    description: Properties of feature
+                    properties:
+                      organisationId:
+                        type: string
+                        required: true
+                        description: ID of organisation
+                        example: 4494327523
+                      name:
+                        type: string
+                        required: true
+                        description: Name of feature
+                        example: Test AB
+                      address:
+                        type: string
+                        required: true
+                        description: Address of feature
+                        example: Testvägen 1
+                      type:
+                        type: string
+                        required: true
+                        description: Type of feature
+                        enum: [collection, distribution]
+                        example: collection
+
     Signup:
       application/json:
         schema:
