@@ -1,28 +1,13 @@
 import { Polygon, GeoJsonObject } from 'geojson';
+import { ZoneType } from '@root/entities';
 
-export enum ZoneType {
-  DISTRIBUTION = 'distribution',
-  COLLECTION = 'collection',
-}
-
-export interface IZone {
-  id: string;
-  name: string;
-  address: string;
-  area: string;
-  type: ZoneType;
-  polygon: Polygon;
-  organisationId: string;
-}
-
-export type FeatureCollection = GeoJsonObject & {
+export type CreateZonesBody = GeoJsonObject & {
   type: 'FeatureCollection';
   features: [
     {
       type: 'Feature';
       geometry: Polygon;
       properties: {
-        id: string;
         name: string;
         address: string;
         area: string;

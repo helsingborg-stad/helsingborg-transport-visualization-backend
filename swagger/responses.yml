@@ -2,6 +2,8 @@ components:
   responses:
     OK:
       description: OK
+    Created:
+      description: Created
     ConflictError:
       description: Conflict
       content:

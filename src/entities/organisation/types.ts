@@ -20,6 +20,7 @@ export interface IOrganisation {
 
 export type OrganisationTokenDestructured = {
   id: string;
+  orgNumber: string;
   email: string;
   name: string;
   createdAt: Date;
@@ -27,6 +28,7 @@ export type OrganisationTokenDestructured = {
 
 export type OrganisationResponse = {
   id: string;
+  orgNumber: string;
   name: string;
   email: string;
   createdAt: Date;
