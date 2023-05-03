@@ -79,7 +79,7 @@ export class AuthService implements IAuthService {
   async sendForgotPasswordEmail(organisation: IOrganisation): Promise<void> {
     const email = new ForgotPasswordMail(organisation.email);
     const url = buildForgotPasswordUrl(organisation.forgotPasswordToken);
-    email.setParams({ url });
+    email.setParams(url);
     return this.mailSender.sendEmail(email);
   }
 
