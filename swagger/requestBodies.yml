@@ -131,31 +131,6 @@ components:
               required: true
               description: User email
               example: test@email.com
-    Geolocation:
-      application/json:
-        schema:
-          type: object
-          properties:
-            latitude:
-              type: number
-              required: true
-              description: Latitude
-              example: 52.520008
-            longitude:
-              type: number
-              required: true
-              description: Longitude
-              example: 13.404954
-            heading:
-              type: number
-              required: true
-              description: Heading
-              example: 24.23
-            registeredAt:
-              type: string
-              required: true
-              description: Registered at
-              example: 2020-01-01T00:00:00.000Z
     ResetPassword:
       application/json:
         schema:
@@ -180,55 +155,3 @@ components:
               description: User confirmed-password
               minimum: 6
               example: password
-    FreightCompany:
-      application/json:
-        schema:
-          type: object
-          properties:
-            name:
-              type: string
-              required: true
-              description: Name of freight company
-              example: DB Schenker
-    Driver:
-      application/json:
-        schema:
-          type: object
-          properties:
-            email:
-              type: string
-              required: true
-              description: User email
-              example: user+1@admin.com
-            password:
-              type: string
-              required: true
-              format: password
-              description: User password
-              minimum: 6
-              example: An Example Password!1
-            freightCompanyId:
-              type: number
-              required: true
-              description: Freight company ID
-    Admin:
-      application/json:
-        schema:
-          type: object
-          properties:
-            email:
-              type: string
-              required: true
-              description: User email
-              example: user+1@admin.com
-            password:
-              type: string
-              required: true
-              format: password
-              description: User password
-              minimum: 6
-              example: An Example Password!1
-            freightCompanyId:
-              type: number
-              required: false
-              description: Freight company ID (optional)

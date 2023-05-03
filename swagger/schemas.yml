@@ -15,29 +15,3 @@ components:
           type: string
         updatedAt:
           type: string
-    User:
-      type: object
-      properties:
-        email:
-          type: string
-        id:
-          type: number
-        userType:
-          type: string
-        createdAt:
-          type: string
-        updatedAt:
-          type: string
-        freightCompanyId:
-          type: string
-    FreightCompany:
-      type: object
-      properties:
-        name:
-          type: string
-        id:
-          type: number
-        createdAt:
-          type: string
-        updatedAt:
-          type: string
