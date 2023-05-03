@@ -1,9 +1,10 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryColumn } from 'typeorm';
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryColumn, OneToMany } from 'typeorm';
 import { IOrganisation } from './types';
 import { compareHashedValue, hashValue } from '@utils/hash';
 import { createJWT } from '@root/services/jwt';
 import randomTokenGenerator from '@utils/radomTokenGenerator';
 import { addDays } from '@utils/date';
+import { Zone, IZone } from '../zone';
 
 @Entity('organisations')
 export class Organisation implements IOrganisation {
@@ -37,6 +38,9 @@ export class Organisation implements IOrganisation {
   @UpdateDateColumn()
   updatedAt?: Date;
 
+  @OneToMany(() => Zone, (zone) => zone)
+  zones: IZone[];
+
   constructor(orgNumber: string, email: string, name: string) {
     this.orgNumber = orgNumber;
     this.email = email;
@@ -59,12 +63,13 @@ export class Organisation implements IOrganisation {
     return compareHashedValue(pinCodeToCompare, this.pinCode);
   }
 
-  public async buildToken(): Promise<string> {
+  public async buildToken(isPasswordAuthenticated: boolean): Promise<string> {
     return createJWT({
       id: this.id,
       orgNumber: this.orgNumber,
       email: this.email,
       name: this.name,
+      isPasswordAuthenticated,
       createdAt: this.createdAt,
     });
   }

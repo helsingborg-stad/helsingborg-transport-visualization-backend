@@ -1,4 +1,4 @@
-import sendgridMail from '@sendgrid/mail';
+import axios from 'axios';
 import logger from '@services/logger';
 import { config } from '@config';
 import { IMail, IMailSender } from './types';
@@ -9,23 +9,31 @@ export class MailSender implements IMailSender {
       logger.debug('MailSender is disabled in test environment');
       return;
     }
-    sendgridMail.setApiKey(config.sendgridKey);
   }
 
-  async sendEmail(mail: IMail<any>): Promise<void> {
+  async sendEmail(mail: IMail): Promise<void> {
     if (config.env === 'test') {
       logger.debug("MailSender won't send email in test environment");
       return;
     }
 
     const data = {
-      from: mail.from,
-      to: mail.to,
-      templateId: mail.templateId,
-      dynamicTemplateData: mail.params,
+      data: {
+        type: mail.type,
+        attributes: {
+          to: mail.to,
+          subject: mail.subject,
+          message: mail.message,
+        },
+      },
     };
     logger.debug('Sending email', data);
-    await sendgridMail.send(data);
+
+    await axios.post(config.mailApiUrl, data, {
+      headers: {
+        'X-API-Key': config.mailApiKey,
+      },
+    });
     logger.debug('Sending email', mail);
   }
 }
