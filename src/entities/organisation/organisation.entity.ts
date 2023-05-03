@@ -63,12 +63,13 @@ export class Organisation implements IOrganisation {
     return compareHashedValue(pinCodeToCompare, this.pinCode);
   }
 
-  public async buildToken(): Promise<string> {
+  public async buildToken(isPasswordAuthenticated: boolean): Promise<string> {
     return createJWT({
       id: this.id,
       orgNumber: this.orgNumber,
       email: this.email,
       name: this.name,
+      isPasswordAuthenticated,
       createdAt: this.createdAt,
     });
   }

@@ -9,7 +9,7 @@ export interface IOrganisation {
   forgotPasswordTokenExpiration?: Date;
   createdAt: Date;
   updatedAt?: Date;
-  buildToken: () => Promise<string>;
+  buildToken: (isPasswordAuthenticated: boolean) => Promise<string>;
   setForgotPasswordToken: (expirationDays?: number) => void;
   setPassword: (text: string) => Promise<void>;
   setPinCode: (text: string) => Promise<void>;
@@ -23,6 +23,7 @@ export type OrganisationTokenDestructured = {
   orgNumber: string;
   email: string;
   name: string;
+  isPasswordAuthenticated: boolean;
   createdAt: Date;
 };
 
