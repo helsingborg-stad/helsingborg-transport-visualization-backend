@@ -29,8 +29,6 @@ export class ZoneRepository implements IZoneRepository {
       FROM zone
       WHERE organisationId = '${orgId}'
     ) t;
-      
-
     `);
   }
 

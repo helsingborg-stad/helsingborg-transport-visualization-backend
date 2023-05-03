@@ -1,12 +1,16 @@
 import { IOrganisation } from '@root/entities';
 import { AuthDTO } from './types';
 
-export const toAuthDTO = async (organisation: IOrganisation, buildToken: boolean = true): Promise<AuthDTO> => ({
+export const toAuthDTO = async (
+  organisation: IOrganisation,
+  isPasswordAuthenticated: boolean = false,
+  buildToken: boolean = true
+): Promise<AuthDTO> => ({
   id: organisation.id,
   orgNumber: organisation.orgNumber,
   email: organisation.email,
   name: organisation.name,
-  token: buildToken ? await organisation.buildToken() : undefined,
+  token: buildToken ? await organisation.buildToken(isPasswordAuthenticated) : undefined,
   createdAt: organisation.createdAt,
   updatedAt: organisation.updatedAt,
 });

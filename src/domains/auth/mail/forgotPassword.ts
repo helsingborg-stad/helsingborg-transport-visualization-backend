@@ -1,15 +1,12 @@
-import { Mail, MailTemplateId } from '@services/mail';
+import { Mail } from '@services/mail';
 
-type ForgotPasswordMailProps = {
-  url: string;
-};
-
-export class ForgotPasswordMail extends Mail<ForgotPasswordMailProps> {
-  templateId: string = MailTemplateId.forgotPassword;
-
-  params: ForgotPasswordMailProps;
-
-  setParams(params: ForgotPasswordMailProps): void {
-    this.params = params;
+export class ForgotPasswordMail extends Mail {
+  subject = 'Återställ lösenord';
+  type = 'html';
+  setParams(url: string): void {
+    this.message = `
+    <p>Klicka på länken nedan för att återställa lösenordet</p>
+    <a href="${url}">Återställ lösenord</a>
+  `;
   }
 }
