@@ -5,4 +5,6 @@ export interface IConfig {
   frontendUrl: string;
   dbConnectionName: string;
   sendgridKey: string;
+  mailApiKey: string;
+  mailApiUrl: string;
 }

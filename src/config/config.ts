@@ -7,4 +7,6 @@ export const config: IConfig = {
   frontendUrl: process.env.FRONTEND_URL,
   dbConnectionName: process.env.DB_CONNECTION_NAME,
   sendgridKey: process.env.SENDGRID_KEY,
+  mailApiKey: process.env.MAIL_API_KEY,
+  mailApiUrl: process.env.MAIL_API_URL,
 };
