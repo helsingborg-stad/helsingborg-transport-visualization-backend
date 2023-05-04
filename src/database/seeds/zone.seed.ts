@@ -1,8 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Connection } from 'typeorm';
-import { Zone, ZoneType } from '@root/entities';
+import { Zone, Organisation, ZoneType } from '@root/entities';
 
-const buildZones = async (amount: number) => {
+const buildZones = async (amount: number, orgs: Organisation[]) => {
+  const orgId = orgs[0].id;
   const zonesList = [...Array(amount)].map(async (_, index) => {
     const zone = new Zone(
       {
@@ -17,8 +18,7 @@ const buildZones = async (amount: number) => {
           ],
         ],
       },
-      //replace with a valid organisation's id
-      `0cb88b29-10a2-4a2e-b7ac-e83eae04a93d`
+      orgId
     );
 
     zone.name = `Zone ${index}`;
@@ -32,6 +32,7 @@ const buildZones = async (amount: number) => {
 };
 
 export const zoneSeeder = async (connection: Connection) => {
-  const zonesList = await buildZones(10);
+  const orgs = await connection.getRepository(Organisation).find();
+  const zonesList = await buildZones(10, orgs);
   return connection.createQueryBuilder().insert().into(Zone).values(zonesList).execute();
 };
