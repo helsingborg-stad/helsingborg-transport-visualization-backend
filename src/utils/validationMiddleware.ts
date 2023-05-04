@@ -31,10 +31,6 @@ validate.validators.geojsonFeatures = (value: any[]) => {
       return 'must contain type';
     }
 
-    if (!feature.properties.organisationId) {
-      return 'must contain organisationId';
-    }
-
     if (!feature.geometry) {
       return 'must contain a valid GeoJSON geometry';
     }
