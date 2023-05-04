@@ -4,7 +4,7 @@ import { ZoneCreateType } from './types';
 
 export interface IZoneService {
   getAllZones: () => Promise<FeatureCollection>;
-  createZones: (zones: ZoneCreateType) => Promise<void>;
+  createZones: (zones: ZoneCreateType, orgId: string) => Promise<void>;
   getZonesByOrgId: (orgId: string) => Promise<FeatureCollection>;
 }
 
@@ -15,7 +15,7 @@ export class ZoneService implements IZoneService {
     return this.repo.getAllZones();
   }
 
-  async createZones(zones: ZoneCreateType): Promise<void> {
+  async createZones(zones: ZoneCreateType, orgId: string): Promise<void> {
     const zonesToSave = zones.features.map((zone) => {
       const newZone = new Zone(zone.geometry, zone.properties.organisationId);
       newZone.name = zone.properties.name;
@@ -23,7 +23,7 @@ export class ZoneService implements IZoneService {
       newZone.area = zone.properties.area;
 
       newZone.type = zone.properties.type;
-      newZone.organisationId = zone.properties.organisationId;
+      newZone.organisationId = orgId;
       return newZone;
     });
     return this.repo.saveAll(zonesToSave);

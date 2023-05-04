@@ -14,16 +14,13 @@ const buildEvents = async (amount: number, firstDeliveryZoneIds: Zone[], orgNumb
     event.enteredAt = new Date();
     event.exitedAt = new Date();
 
-    console.log('🚀 ~ file: event.seed.ts:11 ~ eventList ~ event:', event);
     return event;
   });
   return Promise.all(eventList);
 };
 
 export const eventSeeder = async (connection: Connection) => {
-  //return zones with type delivery
   const zones = await connection.getRepository(Zone).find({ where: { type: ZoneType.DELIVERY } });
-  //return organisation
   const orgs = await connection.getRepository(Organisation).find();
 
   const zonesList = [
