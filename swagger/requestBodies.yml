@@ -67,11 +67,6 @@ components:
                     required: true
                     description: Properties of feature
                     properties:
-                      organisationId:
-                        type: string
-                        required: true
-                        description: ID of organisation
-                        example: 4494327523
                       name:
                         type: string
                         required: true
@@ -82,6 +77,11 @@ components:
                         required: true
                         description: Address of feature
                         example: Testvägen 1
+                      area:
+                        type: string
+                        required: true
+                        description: Area of feature
+                        example: Teststaden
                       type:
                         type: string
                         required: true
