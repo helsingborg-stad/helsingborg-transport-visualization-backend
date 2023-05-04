@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
 
 export class Events1683114223287 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -73,11 +73,20 @@ export class Events1683114223287 implements MigrationInterface {
             referencedTableName: 'zones',
           },
         ],
+      }),
+      true
+    );
+    await queryRunner.createIndex(
+      'events',
+      new TableIndex({
+        name: 'IDX_events_name_orgNumber_zoneType_address_area',
+        columnNames: ['name', 'orgNumber', 'zoneType', 'address', 'area'],
       })
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('events');
+    await queryRunner.dropIndex('events', 'IDX_events_name_orgNumber_zoneType_address_area');
   }
 }
