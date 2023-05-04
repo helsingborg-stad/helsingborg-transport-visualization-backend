@@ -1,4 +1,4 @@
-import { Repository, MoreThanOrEqual } from 'typeorm';
+import { Repository, MoreThanOrEqual, In } from 'typeorm';
 import { IOrganisation, Organisation, OrganisationResponse } from '@root/entities';
 import { buildRepository } from '@root/services/database';
 
@@ -6,6 +6,7 @@ export interface IOrganisationRepository {
   findByEmail: (email: string) => Promise<IOrganisation | null>;
   findById: (id: string) => Promise<IOrganisation | null>;
   findByOrgNumber: (orgNumber: string) => Promise<IOrganisation | null>;
+  findByOrgNumbers: (orgNumbers: string[]) => Promise<IOrganisation[]>;
   findByOrgNumberOrEmail: (identifier: string) => Promise<IOrganisation | null>;
   findByForgotPasswordToken: (token: string) => Promise<IOrganisation | null>;
   save: (organisation: IOrganisation) => Promise<IOrganisation>;
@@ -25,6 +26,10 @@ export class OrganisationRepository implements IOrganisationRepository {
     return this.repo.findOne({
       where: { orgNumber },
     });
+  }
+
+  async findByOrgNumbers(orgNumbers: string[]): Promise<IOrganisation[]> {
+    return this.repo.find({ where: { orgNumber: In(orgNumbers) } });
   }
 
   async findById(id: string): Promise<IOrganisation | null> {
