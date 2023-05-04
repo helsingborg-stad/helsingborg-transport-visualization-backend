@@ -2,7 +2,7 @@ import { Polygon, GeoJsonObject } from 'geojson';
 
 export enum ZoneType {
   DISTRIBUTION = 'distribution',
-  COLLECTION = 'collection',
+  DELIVERY = 'delivery',
 }
 
 export interface IZone {
