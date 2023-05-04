@@ -15,3 +15,27 @@ components:
           type: string
         updatedAt:
           type: string
+    IEventFilterValues:
+      type: object
+      properties:
+        organisations:
+          type: array
+          items:
+            type: object
+            properties:
+              orgNumber:
+                type: string
+              name:
+                type: string
+        names:
+          type: array
+          items:
+            type: string
+        areas:
+          type: array
+          items:
+            type: string
+        addresses:
+          type: array
+          items:
+            type: string
