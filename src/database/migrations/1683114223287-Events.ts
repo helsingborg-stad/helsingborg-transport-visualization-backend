@@ -11,6 +11,8 @@ export class Events1683114223287 implements MigrationInterface {
             type: 'uuid',
             isPrimary: true,
             isNullable: false,
+            isGenerated: true,
+            generationStrategy: 'uuid',
           },
           {
             name: 'trackingId',
