@@ -53,3 +53,10 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ILoginResponse'
+
+    EventFilterValues:
+      description: Data used to filter events.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/IEventFilterValues'

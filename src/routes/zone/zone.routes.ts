@@ -31,7 +31,9 @@ export const zoneRoutes = () => {
    */
   router.post('/', isAuth, createZonesValidation, async (req: Request<null, null, CreateZonesBody>, res: Response) => {
     try {
-      await zoneService.createZones(req.body);
+      //@ts-ignore
+      const { id } = req.auth;
+      await zoneService.createZones(req.body, id);
       res.status(201).send({ message: 'Zones created' });
     } catch (e) {
       return handleError(e, res);
