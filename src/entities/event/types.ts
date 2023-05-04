@@ -2,6 +2,7 @@ import { ZoneType } from '../zone';
 
 export interface IEvent {
   id: string;
+  trackingId: string;
   zoneType: ZoneType;
   address: string;
   name: string;

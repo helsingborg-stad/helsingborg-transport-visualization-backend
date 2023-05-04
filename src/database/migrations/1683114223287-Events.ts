@@ -13,6 +13,11 @@ export class Events1683114223287 implements MigrationInterface {
             isNullable: false,
           },
           {
+            name: 'trackingId',
+            type: 'varchar',
+            isNullable: false,
+          },
+          {
             name: 'orgNumber',
             type: 'varchar',
             isNullable: false,

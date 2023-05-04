@@ -8,6 +8,9 @@ export class Event implements IEvent {
   id: string;
 
   @Column()
+  trackingId: string;
+
+  @Column()
   orgNumber: string;
 
   @Column({
@@ -39,7 +42,8 @@ export class Event implements IEvent {
   @Column({ nullable: true })
   zoneId: string;
 
-  constructor(orgNumber: string, zoneType: ZoneType, zoneId: string) {
+  constructor(trackingId: string, orgNumber: string, zoneType: ZoneType, zoneId: string) {
+    this.trackingId = trackingId;
     this.orgNumber = orgNumber;
     this.zoneType = zoneType;
     this.zoneId = zoneId;
