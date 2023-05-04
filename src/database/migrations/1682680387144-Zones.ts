@@ -1,5 +1,4 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
-import { ZoneType } from '@root/entities';
 
 export class Zones1682680387144 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -34,7 +33,7 @@ export class Zones1682680387144 implements MigrationInterface {
           {
             name: 'type',
             type: 'varchar',
-            enum: [ZoneType.DISTRIBUTION, ZoneType.COLLECTION],
+            enum: ['distribution', 'delivery'],
             isNullable: false,
           },
           {

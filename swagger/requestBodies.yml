@@ -86,8 +86,8 @@ components:
                         type: string
                         required: true
                         description: Type of feature
-                        enum: [collection, distribution]
-                        example: collection
+                        enum: [delivery, distribution]
+                        example: delivery
 
     Signup:
       application/json:
