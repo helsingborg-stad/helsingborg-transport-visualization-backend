@@ -13,3 +13,15 @@ export interface IEvent {
   exitedAt: Date;
   createdAt: Date;
 }
+
+export type OrgNumberWithName = {
+  name: string;
+  orgNumber: string;
+};
+
+export type FilterTypeResponse = {
+  organisations: OrgNumberWithName[];
+  names: string[];
+  areas: string[];
+  addresses: string[];
+};
