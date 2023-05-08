@@ -16,6 +16,7 @@
     "noEmit": false,
     "esModuleInterop": true,
     "baseUrl": "./src",
+    "downlevelIteration": true,
     "paths": {
       "@root/*": ["./*"],
       "@config": ["config"],
@@ -25,12 +26,5 @@
       "@utils/*": ["utils/*"]
     }
   },
-  "exclude": [
-    "./node_modules",
-    "./build",
-    "jest.config.js",
-    "babel.config.js",
-    "jest.setup.ts",
-    "./tests"
-  ]
+  "exclude": ["./node_modules", "./build", "jest.config.js", "babel.config.js", "jest.setup.ts", "./tests"]
 }

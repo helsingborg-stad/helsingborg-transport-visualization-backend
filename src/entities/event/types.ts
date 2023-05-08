@@ -1,3 +1,4 @@
+import { OrganisationResponse } from '../organisation';
 import { ZoneType } from '../zone';
 
 export interface IEvent {
@@ -24,4 +25,18 @@ export type FilterTypeResponse = {
   names: string[];
   areas: string[];
   addresses: string[];
+};
+
+export type EventResponseType = {
+  id: string;
+  trackingId: string;
+  zoneType: ZoneType;
+  address: string;
+  name: string;
+  area: string;
+  zoneId: string;
+  enteredAt: Date;
+  exitedAt: Date;
+  createdAt: Date;
+  organisation: OrganisationResponse;
 };
