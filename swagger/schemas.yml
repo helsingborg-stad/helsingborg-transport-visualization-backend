@@ -113,6 +113,10 @@ components:
           type: string
         email:
           type: string
+        contactPerson:
+          type: string
+        mobileNumber:
+          type: string
         createdAt:
           type: string
         updatedAt:
