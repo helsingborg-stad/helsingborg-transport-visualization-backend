@@ -1,9 +1,11 @@
 import { Repository } from 'typeorm';
 import { IEvent, Event, FilterTypeResponse } from '@root/entities';
 import { buildRepository } from '@root/services/database';
+import { FilterQueries } from '@root/domains/event';
 
 export interface IEventRepository {
   findUniqueValues: (columns: string[]) => Promise<FilterTypeResponse>;
+  filterEvents: (filter: FilterQueries) => Promise<IEvent[]>;
 }
 
 export class EventRepository implements IEventRepository {
@@ -38,5 +40,23 @@ export class EventRepository implements IEventRepository {
     });
 
     return response;
+  }
+
+  async filterEvents(filter: FilterQueries): Promise<IEvent[]> {
+    const query = this.repo.createQueryBuilder('event');
+
+    if (filter.names) {
+      query.andWhere('event.name IN (:...names)', { names: filter.names });
+    }
+
+    if (filter.orgNumbers) {
+      query.andWhere('event.orgNumber IN (:...orgNumbers)', { orgNumbers: filter.orgNumbers });
+    }
+
+    if (filter.areas) {
+      query.andWhere('event.area IN (:...areas)', { areas: filter.areas });
+    }
+
+    return query.getMany();
   }
 }
