@@ -60,3 +60,17 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/IEventFilterValues'
+    FeatureCollection:
+      description: Zones
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/IFeatureCollection'
+    ListOfOrganisations:
+      description: Organisation
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/IOrganisationResponse'

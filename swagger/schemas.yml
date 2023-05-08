@@ -1,5 +1,68 @@
 components:
   schemas:
+    IFeatureCollection:
+      type: object
+      properties:
+        type:
+          type: string
+          required: true
+          description: Type of feature collection
+          example: FeatureCollection
+        features:
+          type: array
+          required: true
+          description: Array of features
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                required: true
+                description: Type of feature
+                example: Feature
+              geometry:
+                type: object
+                required: true
+                description: Geometry of feature
+                properties:
+                  type:
+                    type: string
+                    required: true
+                    description: Type of geometry
+                    example: Point
+                  coordinates:
+                    type: array
+                    required: true
+                    description: Array of coordinates
+                    items:
+                      type: number
+                      example: 13.404954
+              properties:
+                type: object
+                required: true
+                description: Properties of feature
+                properties:
+                  name:
+                    type: string
+                    required: true
+                    description: Name of feature
+                    example: Test AB
+                  address:
+                    type: string
+                    required: true
+                    description: Address of feature
+                    example: Testvägen 1
+                  area:
+                    type: string
+                    required: true
+                    description: Area of feature
+                    example: Teststaden
+                  type:
+                    type: string
+                    required: true
+                    description: Type of feature
+                    enum: [delivery, distribution]
+                    example: delivery
     ILoginResponse:
       type: object
       properties:
@@ -39,3 +102,18 @@ components:
           type: array
           items:
             type: string
+    IOrganisationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        orgNumber:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
