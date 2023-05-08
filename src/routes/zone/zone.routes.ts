@@ -33,7 +33,7 @@ export const zoneRoutes = () => {
   router.post(
     '/',
     isAuth,
-    isPasswordAuthenticated,
+    isPasswordAuthenticated(true),
     createZonesValidation,
     async (req: Request<null, null, CreateZonesBody>, res: Response) => {
       try {

@@ -48,6 +48,16 @@ components:
               required: true
               description: Organisations' email
               example: test@email.com
+            contactPerson:
+              type: string
+              required: true
+              description: Organisations' contact person
+              example: Test Testsson
+            mobileNumber:
+              type: string
+              required: true
+              description: Organisations' contact persons mobile number
+              example: 0701234567
             password:
               type: string
               required: true
