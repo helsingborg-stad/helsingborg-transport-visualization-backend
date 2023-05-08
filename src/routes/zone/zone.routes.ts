@@ -3,6 +3,7 @@ import { createZonesValidation } from './validation';
 import { ZoneService, IZoneService } from '@domains/zone';
 import { handleError } from '@root/utils/handleError';
 import { isAuth } from '@root/middlewares/isAuth';
+import { isPasswordAuthenticated } from '@root/middlewares/isPasswordAuthenticated';
 import { CreateZonesBody } from './types';
 
 export const zoneRoutes = () => {
@@ -29,12 +30,42 @@ export const zoneRoutes = () => {
    *      401:
    *        $ref: '#/components/responses/UnauthorizedError'
    */
-  router.post('/', isAuth, createZonesValidation, async (req: Request<null, null, CreateZonesBody>, res: Response) => {
+  router.post(
+    '/',
+    isAuth,
+    isPasswordAuthenticated,
+    createZonesValidation,
+    async (req: Request<null, null, CreateZonesBody>, res: Response) => {
+      try {
+        //@ts-ignore
+        const { id } = req.auth;
+        await zoneService.createZones(req.body, id);
+        res.status(201).send({ message: 'Zones created' });
+      } catch (e) {
+        return handleError(e, res);
+      }
+    }
+  );
+
+  /**
+   * @swagger
+   * /zones:
+   *  get:
+   *    summary: Get all zones
+   *    description: "Attempt to fetch all zones"
+   *    tags:
+   *      - Zones
+   *    consumes: application/json
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/FeatureCollection'
+   *      401:
+   *        $ref: '#/components/responses/UnauthorizedError'
+   */
+  router.get('/', isAuth, async (req: Request, res: Response) => {
     try {
-      //@ts-ignore
-      const { id } = req.auth;
-      await zoneService.createZones(req.body, id);
-      res.status(201).send({ message: 'Zones created' });
+      const zones = await zoneService.getAllZones();
+      res.status(200).send(zones);
     } catch (e) {
       return handleError(e, res);
     }
