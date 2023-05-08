@@ -6,13 +6,14 @@ const buildEvents = async (amount: number, firstDeliveryZoneIds: Zone[], orgNumb
   const firstDeliveryZoneId = firstDeliveryZoneIds[0].id;
   const orgNumber = orgNumbers[0].orgNumber;
   const eventList = [...Array(amount)].map(async (_, index) => {
-    const event = new Event(`test-tracking-id-${index}`, orgNumber, ZoneType.DELIVERY, firstDeliveryZoneId);
+    const event = new Event(`test-tracking-id-${index}`, new Date(), new Date());
 
+    event.zoneType = ZoneType.DELIVERY;
+    event.zoneId = firstDeliveryZoneId;
+    event.orgNumber = orgNumber;
     event.name = `Event ${index}`;
     event.address = `Address ${index}`;
     event.area = `Area ${index}`;
-    event.enteredAt = new Date();
-    event.exitedAt = new Date();
 
     return event;
   });

@@ -1,5 +1,5 @@
 import { OrganisationResponse } from '../organisation';
-import { ZoneType } from '../zone';
+import { ZoneType, Zone } from '../zone';
 
 export interface IEvent {
   id: string;
@@ -13,6 +13,7 @@ export interface IEvent {
   enteredAt: Date;
   exitedAt: Date;
   createdAt: Date;
+  setZone(zone: Zone): void;
 }
 
 export type OrgNumberWithName = {
