@@ -7,6 +7,19 @@ export const eventRoutes = () => {
   const router = Router();
   const eventService: IEventService = new EventService();
 
+  /**
+   * @swagger
+   * /events:
+   *  get:
+   *    summary: Get events
+   *    description: "Attempt to fetch events"
+   *    tags:
+   *      - Events
+   *    consumes: application/json
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/ListOfEvents'
+   */
   router.get('/', async (req: Request<null, null, null, FilterQueryType>, res: Response) => {
     try {
       const names = req.query.names?.split(',');
