@@ -6,6 +6,7 @@ import { FilterQueries } from '@root/domains/event';
 export interface IEventRepository {
   findUniqueValues: (columns: string[]) => Promise<FilterTypeResponse>;
   filterEvents: (filter: FilterQueries) => Promise<IEvent[]>;
+  save: (event: IEvent) => Promise<IEvent>;
 }
 
 export class EventRepository implements IEventRepository {
@@ -58,5 +59,9 @@ export class EventRepository implements IEventRepository {
     }
 
     return query.getMany();
+  }
+
+  async save(event: IEvent): Promise<IEvent> {
+    return this.repo.save(event);
   }
 }
