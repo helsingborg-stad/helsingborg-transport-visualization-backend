@@ -13,6 +13,14 @@ export const signupValidation = validationMiddleware({
     presence: true,
     email: true,
   },
+  contactPerson: {
+    presence: true,
+    type: 'string',
+  },
+  mobileNumber: {
+    presence: true,
+    type: 'string',
+  },
   password: {
     presence: true,
     format: {

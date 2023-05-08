@@ -21,6 +21,12 @@ export class Organisation implements IOrganisation {
   name: string;
 
   @Column()
+  contactPerson: string;
+
+  @Column()
+  mobileNumber: string;
+
+  @Column()
   password: string;
 
   @Column()

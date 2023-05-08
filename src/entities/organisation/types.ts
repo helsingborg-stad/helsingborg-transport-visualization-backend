@@ -3,6 +3,8 @@ export interface IOrganisation {
   orgNumber: string;
   name: string;
   email: string;
+  contactPerson: string;
+  mobileNumber: string;
   password: string;
   pinCode: string;
   forgotPasswordToken?: string;
@@ -30,6 +32,8 @@ export type OrganisationTokenDestructured = {
 export type OrganisationResponse = {
   id: string;
   orgNumber: string;
+  mobileNumber: string;
+  contactPerson: string;
   name: string;
   email: string;
   createdAt: Date;
