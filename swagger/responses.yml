@@ -82,3 +82,9 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/IEventResponse'
+    IEvent:
+      description: Event
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/IEventResponse'

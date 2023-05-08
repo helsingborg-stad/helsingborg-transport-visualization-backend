@@ -146,3 +146,28 @@ components:
           type: string
         exitedAt:
           type: string
+    IEventOrganisationResponse:
+      type: object
+      properties:
+        trackingId:
+          type: string
+        zoneType:
+          type: string
+        zoneId:
+          type: string
+        id:
+          type: string
+        address:
+          type: string
+        name:
+          type: string
+        area:
+          type: string
+        createdAt:
+          type: string
+        enteredAt:
+          type: string
+        exitedAt:
+          type: string
+        organisation:
+          $ref: '#/components/schemas/IOrganisationResponse'
