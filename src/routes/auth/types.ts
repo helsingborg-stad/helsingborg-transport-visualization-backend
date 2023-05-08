@@ -8,6 +8,8 @@ export type SignupBody = {
   orgNumber: string;
   name: string;
   email: string;
+  contactPerson: string;
+  mobileNumber: string;
   password: string;
   pinCode: string;
 };

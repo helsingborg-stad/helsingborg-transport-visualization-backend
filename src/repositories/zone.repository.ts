@@ -35,23 +35,25 @@ export class ZoneRepository implements IZoneRepository {
   async saveAll(zones: IZone[]): Promise<void> {
     await this.repo.save(zones);
   }
+
   async getAllZones(): Promise<FeatureCollection> {
-    return this.repo.query(`
-    SELECT json_build_object(
-      'type', 'FeatureCollection',
-      'features', json_agg(ST_AsGeoJSON(t.*)::json)
-    )
-    FROM (
-      SELECT
-        id,
-        name,
-        address,
-        area,
-        type,
-        organisationId,
-        polygon
-      FROM zone
-    ) t;
-      `);
+    const result = await this.repo.query(`
+      SELECT json_build_object(
+        'type', 'FeatureCollection',
+        'features', json_agg(ST_AsGeoJSON(t.*)::json)
+      )
+      FROM (
+        SELECT
+          id,
+          name,
+          address,
+          area,
+          type,
+          "organisationId",
+          polygon
+        FROM zones
+      ) t;
+    `);
+    return result[0].json_build_object;
   }
 }
