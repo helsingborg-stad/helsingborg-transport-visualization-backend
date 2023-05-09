@@ -6,6 +6,7 @@ export interface IZoneRepository {
   findByOrgId: (orgId: string) => Promise<FeatureCollection>;
   saveAll: (zones: IZone[]) => Promise<void>;
   getAllZones: () => Promise<FeatureCollection>;
+  getZoneById: (id: string) => Promise<IZone>;
 }
 
 export class ZoneRepository implements IZoneRepository {
@@ -55,5 +56,11 @@ export class ZoneRepository implements IZoneRepository {
       ) t;
     `);
     return result[0].json_build_object;
+  }
+
+  async getZoneById(id: string): Promise<IZone> {
+    return this.repo.findOneOrFail({
+      where: { id },
+    });
   }
 }

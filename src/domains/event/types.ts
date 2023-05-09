@@ -3,3 +3,9 @@ export type FilterQueries = {
   orgNumbers?: string[];
   areas?: string[];
 };
+
+export type CreateEventBody = {
+  trackingId: string;
+  enteredAt: Date;
+  exitedAt: Date;
+};

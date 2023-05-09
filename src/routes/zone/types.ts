@@ -17,3 +17,19 @@ export type CreateZonesBody = GeoJsonObject & {
     }
   ];
 };
+
+export type FilterEventQueryType = {
+  names?: string;
+  orgNumbers?: string;
+  areas?: string;
+};
+
+export type CreateEventBody = {
+  trackingId: string;
+  enteredAt: Date;
+  exitedAt: Date;
+};
+
+export type IdParamsType = {
+  id: string;
+};

@@ -27,6 +27,26 @@ components:
       application/json:
         schema:
           $ref: '#/components/schemas/IFeatureCollection'
+    Event:
+      application/json:
+        schema:
+          type: object
+          properties:
+            trackingId:
+              type: string
+              required: true
+              description: Tracking id
+              example: 1234567890
+            enteredAt:
+              type: string
+              required: true
+              description: Entered at
+              example: 2020-01-01T00:00:00.000Z
+            exitedAt:
+              type: string
+              required: true
+              description: Exited at
+              example: 2020-01-01T00:00:00.000Z
 
     Signup:
       application/json:
@@ -75,10 +95,10 @@ components:
         schema:
           type: object
           properties:
-            email:
+            identifier:
               type: string
               required: true
-              description: User email
+              description: User email or org number
               example: test@email.com
     ResetPassword:
       application/json:
