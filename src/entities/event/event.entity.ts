@@ -42,10 +42,17 @@ export class Event implements IEvent {
   @Column({ nullable: true })
   zoneId: string;
 
-  constructor(trackingId: string, orgNumber: string, zoneType: ZoneType, zoneId: string) {
+  constructor(trackingId: string, enteredAt: Date, exitedAt: Date) {
     this.trackingId = trackingId;
-    this.orgNumber = orgNumber;
-    this.zoneType = zoneType;
-    this.zoneId = zoneId;
+    this.enteredAt = enteredAt;
+    this.exitedAt = exitedAt;
+  }
+
+  setZone(zone: IZone): void {
+    this.zoneId = zone.id;
+    this.zoneType = zone.type;
+    this.address = zone.address;
+    this.name = zone.name;
+    this.area = zone.area;
   }
 }

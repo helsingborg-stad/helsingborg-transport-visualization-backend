@@ -74,3 +74,17 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/IOrganisationResponse'
+    ListOfEvents:
+      description: Events
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/IEventResponse'
+    IEvent:
+      description: Event
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/IEventResponse'
