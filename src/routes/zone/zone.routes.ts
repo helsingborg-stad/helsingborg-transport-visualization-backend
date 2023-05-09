@@ -143,6 +143,6 @@ export const zoneRoutes = () => {
       }
     }
   );
-  console.log('sadsasd');
+
   return router;
 };
