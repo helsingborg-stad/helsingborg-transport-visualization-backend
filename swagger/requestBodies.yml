@@ -117,10 +117,3 @@ components:
               description: User password
               minimum: 6
               example: password
-            confirmedPassword:
-              type: string
-              required: true
-              format: password
-              description: User confirmed-password
-              minimum: 6
-              example: password
