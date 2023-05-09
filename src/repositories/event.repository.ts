@@ -58,6 +58,10 @@ export class EventRepository implements IEventRepository {
       query.andWhere('event.area IN (:...areas)', { areas: filter.areas });
     }
 
+    if (filter.weekdays) {
+      query.andWhere('EXTRACT(DOW FROM event.enteredAt) IN (:...weekdays)', { weekdays: filter.weekdays });
+    }
+
     return query.getMany();
   }
 
