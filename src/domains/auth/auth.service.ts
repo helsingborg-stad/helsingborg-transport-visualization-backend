@@ -12,7 +12,7 @@ export interface IAuthService {
   loginByPassword(identifier: string, password: string): Promise<AuthDTO | null>;
   loginByPinCode(orgNumber: string, pinCode: string): Promise<AuthDTO | null>;
   forgotPassword(identifier: string): Promise<void>;
-  resetPassword(token: string, password: string): Promise<void>;
+  resetPassword(token: string, password: string): Promise<AuthDTO | null>;
   signup(signupBody: SignupBody): Promise<AuthDTO>;
 }
 
@@ -52,7 +52,7 @@ export class AuthService implements IAuthService {
     return toAuthDTO(organisation);
   }
 
-  async resetPassword(token: string, password: string): Promise<void> {
+  async resetPassword(token: string, password: string): Promise<AuthDTO> {
     const organisation = await this.authRepo.findByForgotPasswordToken(token);
 
     if (!organisation) {
@@ -62,6 +62,7 @@ export class AuthService implements IAuthService {
     await organisation.setPassword(password);
     organisation.clearForgotPasswordToken();
     await this.authRepo.save(organisation);
+    return toAuthDTO(organisation, true);
   }
 
   async forgotPassword(identifier: string): Promise<void> {
