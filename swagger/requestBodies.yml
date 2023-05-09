@@ -95,10 +95,10 @@ components:
         schema:
           type: object
           properties:
-            email:
+            identifier:
               type: string
               required: true
-              description: User email
+              description: User email or org number
               example: test@email.com
     ResetPassword:
       application/json:

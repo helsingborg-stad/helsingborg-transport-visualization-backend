@@ -1,8 +1,7 @@
 import { validationMiddleware } from '@root/utils/validationMiddleware';
 
 export const forgotPasswordValidation = validationMiddleware({
-  email: {
+  identifier: {
     presence: true,
-    email: true,
   },
 });

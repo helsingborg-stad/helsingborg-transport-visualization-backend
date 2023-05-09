@@ -15,7 +15,7 @@ export type SignupBody = {
 };
 
 export type ForgotPasswordBody = {
-  email: string;
+  identifier: string;
 };
 
 export type ResetPasswordBody = {
