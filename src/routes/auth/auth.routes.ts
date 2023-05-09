@@ -92,8 +92,8 @@ export const authRoutes = () => {
     forgotPasswordValidation,
     async (req: Request<null, null, ForgotPasswordBody>, res) => {
       try {
-        const { email } = req.body;
-        await authService.forgotPassword(email);
+        const { identifier } = req.body;
+        await authService.forgotPassword(identifier);
         return res.sendStatus(200);
       } catch (e) {
         return handleError(e, res);

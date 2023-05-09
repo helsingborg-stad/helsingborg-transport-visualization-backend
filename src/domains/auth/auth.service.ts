@@ -11,7 +11,7 @@ import { SignupBody } from '@root/routes/auth/types';
 export interface IAuthService {
   loginByPassword(identifier: string, password: string): Promise<AuthDTO | null>;
   loginByPinCode(orgNumber: string, pinCode: string): Promise<AuthDTO | null>;
-  forgotPassword(email: string): Promise<void>;
+  forgotPassword(identifier: string): Promise<void>;
   resetPassword(token: string, password: string): Promise<void>;
   signup(signupBody: SignupBody): Promise<AuthDTO>;
 }
@@ -64,8 +64,8 @@ export class AuthService implements IAuthService {
     await this.authRepo.save(organisation);
   }
 
-  async forgotPassword(email: string): Promise<void> {
-    const organisation = await this.authRepo.findByEmail(email);
+  async forgotPassword(identifier: string): Promise<void> {
+    const organisation = await this.authRepo.findByOrgNumberOrEmail(identifier);
 
     if (!organisation) {
       return;
