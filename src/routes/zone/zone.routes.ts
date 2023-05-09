@@ -92,10 +92,12 @@ export const zoneRoutes = () => {
       const names = req.query.names?.split(',');
       const orgNumbers = req.query.orgNumbers?.split(',');
       const areas = req.query.areas?.split(',');
+      const weekdays = req.query.weekdays?.split(',');
       const results = await eventService.getEvents({
         names,
         orgNumbers,
         areas,
+        weekdays,
       });
       res.status(200).send(results);
     } catch (e) {
