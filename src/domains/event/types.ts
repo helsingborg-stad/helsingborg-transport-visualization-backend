@@ -7,6 +7,7 @@ export type FilterQueries = {
 
 export type CreateEventBody = {
   trackingId: string;
+  distributionZoneId: string;
   enteredAt: Date;
   exitedAt: Date;
 };

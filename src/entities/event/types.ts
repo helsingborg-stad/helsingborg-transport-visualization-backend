@@ -10,9 +10,11 @@ export interface IEvent {
   area: string;
   orgNumber: string;
   zoneId: string;
+  distributionZoneId: string;
   enteredAt: Date;
   exitedAt: Date;
   createdAt: Date;
+  distributionZone: Zone | null;
   setZone(zone: Zone): void;
 }
 
@@ -40,4 +42,5 @@ export type EventResponseType = {
   exitedAt: Date;
   createdAt: Date;
   organisation: OrganisationResponse;
+  distributionOrganisation: OrganisationResponse | null;
 };
