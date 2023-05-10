@@ -50,8 +50,19 @@ export class ZoneRepository implements IZoneRepository {
           address,
           area,
           type,
-          "organisationId",
-          polygon
+          polygon,
+          (
+            SELECT json_build_object(
+              'id', id,
+              'orgNumber', "orgNumber",
+              'name', name,
+              'email', email,
+              'createdAt', "createdAt",
+              'updatedAt', "updatedAt",
+              'mobileNumber', "mobileNumber",
+              'contactPerson', "contactPerson"
+              ) AS "organisation" FROM organisations WHERE id = "organisationId"
+          )
         FROM zones
       ) t;
     `);
