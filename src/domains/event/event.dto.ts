@@ -23,5 +23,17 @@ export const toEventDTO = (event: IEvent, Organisations: IOrganisation[]): Event
       createdAt: org.createdAt,
       updatedAt: org.updatedAt,
     },
+    distributionOrganisation: !!event.distributionZone
+      ? {
+          id: event.distributionZone.organisation.id,
+          orgNumber: event.distributionZone.organisation.orgNumber,
+          email: event.distributionZone.organisation.email,
+          name: event.distributionZone.organisation.name,
+          mobileNumber: event.distributionZone.organisation.mobileNumber,
+          contactPerson: event.distributionZone.organisation.contactPerson,
+          createdAt: event.distributionZone.organisation.createdAt,
+          updatedAt: event.distributionZone.organisation.updatedAt,
+        }
+      : null,
   };
 };

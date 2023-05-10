@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { IEvent } from './types';
 import { IZone, Zone, ZoneType } from '../zone';
 
@@ -41,6 +41,14 @@ export class Event implements IEvent {
   zone: IZone;
   @Column({ nullable: true })
   zoneId: string;
+
+  @ManyToOne(() => Zone)
+  @JoinColumn({ name: 'distributionZoneId' })
+  distributionZone: IZone;
+  @Column({ nullable: true })
+  distributionZoneId: string;
+
+  //create a connection from event to zone to organisation
 
   constructor(trackingId: string, enteredAt: Date, exitedAt: Date) {
     this.trackingId = trackingId;
