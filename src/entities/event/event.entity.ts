@@ -48,8 +48,6 @@ export class Event implements IEvent {
   @Column({ nullable: true })
   distributionZoneId: string;
 
-  //create a connection from event to zone to organisation
-
   constructor(trackingId: string, enteredAt: Date, exitedAt: Date) {
     this.trackingId = trackingId;
     this.enteredAt = enteredAt;
