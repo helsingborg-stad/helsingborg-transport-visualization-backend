@@ -37,6 +37,12 @@ components:
               required: true
               description: Tracking id
               example: 1234567890
+            distributionZoneId:
+              type: string
+              required: true
+              nullable: true
+              description: Distribution zone id
+              example: 1234567890
             enteredAt:
               type: string
               required: true

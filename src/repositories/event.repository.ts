@@ -62,6 +62,8 @@ export class EventRepository implements IEventRepository {
       query.andWhere('EXTRACT(DOW FROM event.enteredAt) IN (:...weekdays)', { weekdays: filter.weekdays });
     }
 
+    query.leftJoinAndSelect('event.distributionZone', 'zone').leftJoinAndSelect('zone.organisation', 'organisation');
+
     return query.getMany();
   }
 

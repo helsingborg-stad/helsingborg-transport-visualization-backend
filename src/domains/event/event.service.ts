@@ -31,11 +31,12 @@ export class EventService implements IEventService {
   }
 
   async createEvent(zoneId: string, orgNumber: string, requestBody: CreateEventBody): Promise<IEvent> {
-    const { trackingId, enteredAt, exitedAt } = requestBody;
+    const { trackingId, enteredAt, exitedAt, distributionZoneId } = requestBody;
     const zone = await this.zoneRepo.getZoneById(zoneId);
     const newEvent = new Event(trackingId, new Date(enteredAt), new Date(exitedAt));
     newEvent.setZone(zone);
     newEvent.orgNumber = orgNumber;
+    newEvent.distributionZoneId = distributionZoneId;
     return this.repo.save(newEvent);
   }
 }

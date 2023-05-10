@@ -1,4 +1,4 @@
-import { Entity, Column, Index, PrimaryColumn, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, Index, PrimaryColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { IZone, ZoneType } from './types';
 import { Polygon } from 'geojson';
 import { IOrganisation, Organisation } from '../organisation';
@@ -33,6 +33,7 @@ export class Zone implements IZone {
   polygon: Polygon;
 
   @ManyToOne(() => Organisation)
+  @JoinColumn({ name: 'organisationId' })
   organisation: IOrganisation;
   @Column()
   organisationId: string;
