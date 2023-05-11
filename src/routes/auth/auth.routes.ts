@@ -90,7 +90,7 @@ export const authRoutes = () => {
   router.post(
     '/forgot-password',
     forgotPasswordValidation,
-    async (req: Request<null, null, ForgotPasswordBody>, res) => {
+    async (req: Request<null, null, ForgotPasswordBody>, res: Response) => {
       try {
         const { identifier } = req.body;
         await authService.forgotPassword(identifier);
@@ -119,15 +119,19 @@ export const authRoutes = () => {
    *      400:
    *        $ref: '#/components/responses/BadRequestError'
    */
-  router.post('/reset-password', resetPasswordValidation, async (req: Request<null, null, ResetPasswordBody>, res) => {
-    try {
-      const { token, password } = req.body;
-      await authService.resetPassword(token, password);
-      return res.sendStatus(200);
-    } catch (e) {
-      return handleError(e, res);
+  router.post(
+    '/reset-password',
+    resetPasswordValidation,
+    async (req: Request<null, null, ResetPasswordBody>, res: Response) => {
+      try {
+        const { token, password } = req.body;
+        const response = await authService.resetPassword(token, password);
+        return res.status(200).send(response);
+      } catch (e) {
+        return handleError(e, res);
+      }
     }
-  });
+  );
 
   return router;
 };

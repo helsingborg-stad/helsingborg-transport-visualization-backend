@@ -1,4 +1,5 @@
 import { Polygon, GeoJsonObject } from 'geojson';
+import { IOrganisation } from '../organisation';
 
 export enum ZoneType {
   DISTRIBUTION = 'distribution',
@@ -12,7 +13,9 @@ export interface IZone {
   area: string;
   type: ZoneType;
   polygon: Polygon;
+  createdAt: Date;
   organisationId: string;
+  organisation: IOrganisation;
 }
 
 export type FeatureCollection = GeoJsonObject & {

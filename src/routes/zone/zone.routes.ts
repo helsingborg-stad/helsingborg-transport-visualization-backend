@@ -64,7 +64,7 @@ export const zoneRoutes = () => {
    *      401:
    *        $ref: '#/components/responses/UnauthorizedError'
    */
-  router.get('/', isAuth, async (req: Request, res: Response) => {
+  router.get('/', async (req: Request, res: Response) => {
     try {
       const zones = await zoneService.getAllZones();
       res.status(200).send(zones);
@@ -143,6 +143,6 @@ export const zoneRoutes = () => {
       }
     }
   );
-  console.log('sadsasd');
+
   return router;
 };

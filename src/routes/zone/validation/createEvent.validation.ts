@@ -10,4 +10,7 @@ export const createEventValidation = validationMiddleware({
   exitedAt: {
     presence: true,
   },
+  distributionZoneId: {
+    presence: true,
+  },
 });
