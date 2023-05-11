@@ -7,8 +7,6 @@ const entities = Object.values(allEntities).filter((entity) => entity);
 const getDbSource = () => {
   const { DB_CONNECTION_NAME } = process.env;
 
-  console.log('🚀 ~ file: ormconfig.ts:9 ~ getDbSource ~ process.env:', process.env);
-
   switch (DB_CONNECTION_NAME) {
     case 'test':
       return {
@@ -24,12 +22,10 @@ const getDbSource = () => {
     case 'gcp':
       return {
         type: 'postgres',
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT as unknown as number,
         username: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
-        socketPath: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`,
+        socketPath: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}/.s.PGSQL.5432`,
         keepConnectionAlive: true,
         entities,
         migrations: [`${__dirname}/migrations/**/*{.ts,.js}`],
