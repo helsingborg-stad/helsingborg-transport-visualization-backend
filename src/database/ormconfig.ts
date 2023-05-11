@@ -7,6 +7,8 @@ const entities = Object.values(allEntities).filter((entity) => entity);
 const getDbSource = () => {
   const { DB_CONNECTION_NAME } = process.env;
 
+  console.log('🚀 ~ file: ormconfig.ts:9 ~ getDbSource ~ process.env:', process.env);
+
   switch (DB_CONNECTION_NAME) {
     case 'test':
       return {
