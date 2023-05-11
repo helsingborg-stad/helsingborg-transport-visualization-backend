@@ -22,10 +22,10 @@ const getDbSource = () => {
     case 'gcp':
       return {
         type: 'postgres',
+        port: process.env.DB_PORT as unknown as number,
         username: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
-        socketPath: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}/.s.PGSQL.5432`,
         keepConnectionAlive: true,
         entities,
         migrations: [`${__dirname}/migrations/**/*{.ts,.js}`],
@@ -34,6 +34,7 @@ const getDbSource = () => {
           migrationsDir: 'src/database/migrations',
         },
         extra: {
+          socketPath: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`,
           max: 10,
         },
       } as PostgresConnectionOptions;
