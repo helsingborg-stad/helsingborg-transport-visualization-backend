@@ -57,3 +57,4 @@ const getDbSource = () => {
 };
 
 export default new DataSource(getDbSource());
+console.log("🚀 ~ file: ormconfig.ts:60 ~ getDbSource():", getDbSource())
