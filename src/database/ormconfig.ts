@@ -22,12 +22,10 @@ const getDbSource = () => {
     case 'gcp':
       return {
         type: 'postgres',
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT as unknown as number,
         username: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
-        socketPath: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`,
+        socketPath: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}/.s.PGSQL.5432`,
         keepConnectionAlive: true,
         entities,
         migrations: [`${__dirname}/migrations/**/*{.ts,.js}`],
@@ -59,3 +57,4 @@ const getDbSource = () => {
 };
 
 export default new DataSource(getDbSource());
+console.log("🚀 ~ file: ormconfig.ts:60 ~ getDbSource():", getDbSource())
