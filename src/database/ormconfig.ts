@@ -27,6 +27,7 @@ const getDbSource = () => {
         username: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
+        socketPath: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`,
         keepConnectionAlive: true,
         entities,
         migrations: [`${__dirname}/migrations/**/*{.ts,.js}`],
