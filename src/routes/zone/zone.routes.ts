@@ -127,7 +127,7 @@ export const zoneRoutes = () => {
    *        $ref: '#/components/responses/UnauthorizedError'
    */
   router.post(
-    '/zones/:id/events',
+    '/:id/events',
     isAuth,
     isPasswordAuthenticated(false),
     createEventValidation,
