@@ -23,6 +23,7 @@ const getDbSource = () => {
       return {
         type: 'postgres',
         port: process.env.DB_PORT as unknown as number,
+        host: `/cloudsql/${process.env.CLOUD_SQL_CONNECTION_NAME}`,
         username: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
