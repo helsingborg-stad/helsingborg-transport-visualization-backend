@@ -86,9 +86,9 @@ export class AuthService implements IAuthService {
 
   async signup(signupBody: SignupBody): Promise<AuthDTO> {
     const { orgNumber, name, email, password, pinCode } = signupBody;
-    const organisation = await this.authRepo.findByOrgNumberOrEmail(orgNumber);
+    const [organisationOrgNumber,organisationEmail] = await Promise.all([this.authRepo.findByOrgNumber(orgNumber),this.authRepo.findByEmail(email)]);
 
-    if (organisation) {
+    if (organisationOrgNumber || organisationEmail) {
       throw new StatusError(409, 'Organisation already exists');
     }
 
