@@ -90,14 +90,16 @@ export const zoneRoutes = () => {
   router.get('/events', async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
     try {
       const names = req.query.names?.split(',');
-      const orgNumbers = req.query.orgNumbers?.split(',');
+      const organisations = req.query.organisations?.split(',');
       const areas = req.query.areas?.split(',');
       const weekdays = req.query.weekdays?.split(',');
+      const distributors = req.query.distributors?.split(',');
       const results = await eventService.getEvents({
         names,
-        orgNumbers,
+        organisations,
         areas,
         weekdays,
+        distributors,
       });
       res.status(200).send(results);
     } catch (e) {

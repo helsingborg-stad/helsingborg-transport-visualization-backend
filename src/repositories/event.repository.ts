@@ -65,8 +65,8 @@ export class EventRepository implements IEventRepository {
       query.andWhere('event.name IN (:...names)', { names: filter.names });
     }
 
-    if (filter.orgNumbers) {
-      query.andWhere('event.orgNumber IN (:...orgNumbers)', { orgNumbers: filter.orgNumbers });
+    if (filter.organisations) {
+      query.andWhere('event.orgNumber IN (:...orgNumbers)', { orgNumbers: filter.organisations });
     }
 
     if (filter.areas) {
@@ -78,6 +78,12 @@ export class EventRepository implements IEventRepository {
     }
 
     query.leftJoinAndSelect('event.distributionZone', 'zone').leftJoinAndSelect('zone.organisation', 'organisation');
+
+    if (filter.distributors) {
+      query.andWhere('organisation.orgNumber IN (:...orgNumbers)', {
+        orgNumbers: filter.distributors,
+      });
+    }
 
     return query.getMany();
   }
