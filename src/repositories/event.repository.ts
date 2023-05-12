@@ -85,6 +85,7 @@ export class EventRepository implements IEventRepository {
       });
     }
 
+    query.orderBy('event.exitedAt', 'DESC');
     return query.getMany();
   }
 
