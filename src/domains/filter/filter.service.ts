@@ -12,12 +12,7 @@ export class FilterService implements IFilterService {
   ) {}
 
   async getUniqueFilterValuesFromEvents(): Promise<FilterTypeResponse> {
-    const filterResponse: FilterTypeResponse = await this.eventRepo.findUniqueValues([
-      '"orgNumber"',
-      'name',
-      'area',
-      'address',
-    ]);
+    const filterResponse: FilterTypeResponse = await this.eventRepo.findFilterValues();
     const organisations = await this.organisationRepo.findByOrgNumbers(
       filterResponse.organisations.map((org) => org.orgNumber)
     );

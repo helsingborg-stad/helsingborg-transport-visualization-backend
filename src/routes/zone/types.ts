@@ -20,9 +20,10 @@ export type CreateZonesBody = GeoJsonObject & {
 
 export type FilterEventQueryType = {
   names?: string;
-  orgNumbers?: string;
+  organisations?: string;
   areas?: string;
   weekdays?: string;
+  distributors?: string;
 };
 
 export type CreateEventBody = {
