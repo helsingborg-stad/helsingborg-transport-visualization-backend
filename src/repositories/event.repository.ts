@@ -4,7 +4,7 @@ import { buildRepository } from '@root/services/database';
 import { FilterQueries } from '@root/domains/event';
 
 export interface IEventRepository {
-  findUniqueValues: (columns: string[]) => Promise<FilterTypeResponse>;
+  findFilterValues: () => Promise<FilterTypeResponse>;
   filterEvents: (filter: FilterQueries) => Promise<IEvent[]>;
   save: (event: IEvent) => Promise<IEvent>;
 }
@@ -12,17 +12,32 @@ export interface IEventRepository {
 export class EventRepository implements IEventRepository {
   constructor(private repo: Repository<IEvent> = buildRepository<IEvent>(Event)) {}
 
-  async findUniqueValues(columns: string[]): Promise<FilterTypeResponse> {
-    const result = await this.repo.createQueryBuilder('event').select(columns).distinct(true).getRawMany();
+  async findFilterValues(): Promise<FilterTypeResponse> {
+    const [uniqueEventData, uniqueDistributors] = await Promise.all([
+      this.repo
+        .createQueryBuilder('event')
+        .select(['"orgNumber"', 'name', 'area', 'address'])
+        .distinct(true)
+        .getRawMany(),
+      this.repo
+        .createQueryBuilder('event')
+        .leftJoinAndSelect('event.distributionZone', 'distributionZone')
+        .leftJoinAndSelect('distributionZone.organisation', 'distributors')
+        .select(['"distributors"."name"', '"distributors"."orgNumber"'])
+        .where('"distributors"."orgNumber" IS NOT NULL')
+        .distinct(true)
+        .getRawMany(),
+    ]);
 
     const response: FilterTypeResponse = {
       organisations: [],
       names: [],
       areas: [],
       addresses: [],
+      distributors: uniqueDistributors,
     };
 
-    result.forEach((row) => {
+    uniqueEventData.forEach((row) => {
       if (row.orgNumber) {
         response.organisations.push({
           name: null,

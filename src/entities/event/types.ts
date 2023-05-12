@@ -28,6 +28,7 @@ export type FilterTypeResponse = {
   names: string[];
   areas: string[];
   addresses: string[];
+  distributors: OrgNumberWithName[];
 };
 
 export type EventResponseType = {
