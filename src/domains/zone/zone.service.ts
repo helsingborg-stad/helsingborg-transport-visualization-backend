@@ -6,6 +6,7 @@ export interface IZoneService {
   getAllZones: () => Promise<FeatureCollection>;
   createZones: (zones: ZoneCreateType, orgId: string) => Promise<void>;
   getZonesByOrgId: (orgId: string) => Promise<FeatureCollection>;
+  getDeliveryZones: (zoneId: string) => Promise<FeatureCollection>;
 }
 
 export class ZoneService implements IZoneService {
@@ -31,5 +32,13 @@ export class ZoneService implements IZoneService {
 
   async getZonesByOrgId(orgId: string): Promise<FeatureCollection> {
     return this.repo.findByOrgId(orgId);
+  }
+
+  async getDeliveryZones(zoneId: string): Promise<FeatureCollection> {
+    const zone = await this.repo.getZoneById(zoneId);
+    if (!zone) {
+      throw new Error('Zone not found');
+    }
+    return this.repo.getDeliveryZones(zoneId);
   }
 }
