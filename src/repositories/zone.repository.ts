@@ -8,6 +8,7 @@ export interface IZoneRepository {
   getAllZones: () => Promise<FeatureCollection>;
   getZoneById: (id: string) => Promise<IZone>;
   getDeliveryZones: (zoneId: string) => Promise<FeatureCollection>;
+  getDistributionZones: (zoneId: string) => Promise<FeatureCollection>;
 }
 
 export class ZoneRepository implements IZoneRepository {
@@ -71,7 +72,7 @@ export class ZoneRepository implements IZoneRepository {
   }
 
   async getZoneById(id: string): Promise<IZone> {
-    return this.repo.findOneOrFail({
+    return this.repo.findOne({
       where: { id },
     });
   }
@@ -107,6 +108,43 @@ export class ZoneRepository implements IZoneRepository {
           SELECT "zoneId"
           FROM events
           WHERE "distributionZoneId" = '${zoneId}'
+        )
+      ) t;
+    `);
+    return result[0].json_build_object;
+  }
+
+  async getDistributionZones(zoneId: string): Promise<FeatureCollection> {
+    const result = await this.repo.query(`
+      SELECT json_build_object(
+        'type', 'FeatureCollection',
+        'features', json_agg(ST_AsGeoJSON(t.*)::json)
+      )
+      FROM (
+        SELECT
+          id,
+          name,
+          address,
+          area,
+          type,
+          polygon,
+          (
+            SELECT json_build_object(
+              'id', id,
+              'orgNumber', "orgNumber",
+              'name', name,
+              'email', email,
+              'createdAt', "createdAt",
+              'updatedAt', "updatedAt",
+              'mobileNumber', "mobileNumber",
+              'contactPerson', "contactPerson"
+              ) AS "organisation" FROM organisations WHERE id = "organisationId"
+          )
+        FROM zones
+        WHERE id IN (
+          SELECT "distributionZoneId"
+          FROM events
+          WHERE "zoneId" = '${zoneId}'
         )
       ) t;
     `);
