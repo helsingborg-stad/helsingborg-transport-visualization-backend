@@ -8,14 +8,14 @@ export const createEventValidation = validationMiddleware({
   enteredAt: {
     presence: true,
     format: {
-      pattern: /^\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}.\d*/,
+      pattern: /^\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}/,
       message: 'must be ISOString',
     },
   },
   exitedAt: {
     presence: true,
     format: {
-      pattern: /^\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}.\d*/,
+      pattern: /^\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}/,
       message: 'must be ISOString',
     },
   },
