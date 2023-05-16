@@ -77,6 +77,19 @@ export class EventRepository implements IEventRepository {
       query.andWhere('EXTRACT(DOW FROM event.enteredAt) IN (:...weekdays)', { weekdays: filter.weekdays });
     }
 
+    if (filter.from && filter.to) {
+      query.andWhere('event.enteredAt BETWEEN :from AND :to', { from: filter.from, to: filter.to });
+    } else if (filter.from) {
+      query.andWhere('event.enteredAt >= :from', { from: filter.from });
+    } else if (filter.to) {
+      query.andWhere('event.enteredAt <= :to', { to: filter.to });
+    }
+
+    if (filter.timeInterval) {
+      const [from, to] = filter.timeInterval;
+      query.andWhere('event."exitedAt"::time BETWEEN :from AND :to', { from, to });
+    }
+
     query.leftJoinAndSelect('event.distributionZone', 'zone').leftJoinAndSelect('zone.organisation', 'organisation');
 
     if (filter.distributors) {
