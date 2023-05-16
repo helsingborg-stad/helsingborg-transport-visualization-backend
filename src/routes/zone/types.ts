@@ -24,6 +24,9 @@ export type FilterEventQueryType = {
   areas?: string;
   weekdays?: string;
   distributors?: string;
+  from?: string;
+  to?: string;
+  timeInterval?: string;
 };
 
 export type CreateEventBody = {
