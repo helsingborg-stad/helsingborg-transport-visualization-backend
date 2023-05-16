@@ -7,11 +7,17 @@ export const createEventValidation = validationMiddleware({
   },
   enteredAt: {
     presence: true,
-    type: 'string',
+    format: {
+      pattern: /^\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}.\d*/,
+      message: 'must be ISOString',
+    },
   },
   exitedAt: {
     presence: true,
-    type: 'string',
+    format: {
+      pattern: /^\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}.\d*/,
+      message: 'must be ISOString',
+    },
   },
   distributionZoneId: {
     type: 'string',
