@@ -138,12 +138,18 @@ export const zoneRoutes = () => {
       const areas = req.query.areas?.split(',');
       const weekdays = req.query.weekdays?.split(',');
       const distributors = req.query.distributors?.split(',');
+      const timeInterval = req.query.timeInterval?.split('-');
+      const from = req.query.from;
+      const to = req.query.to;
       const results = await eventService.getEvents({
         names,
         organisations,
         areas,
         weekdays,
         distributors,
+        timeInterval,
+        from,
+        to,
       });
       res.status(200).send(results);
     } catch (e) {
