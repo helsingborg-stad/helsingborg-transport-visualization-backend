@@ -1,8 +1,9 @@
 export type FilterQueries = {
   names?: string[];
-  orgNumbers?: string[];
+  organisations?: string[];
   areas?: string[];
   weekdays?: string[];
+  distributors?: string[];
 };
 
 export type CreateEventBody = {

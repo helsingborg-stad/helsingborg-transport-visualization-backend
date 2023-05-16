@@ -61,13 +61,57 @@ export const zoneRoutes = () => {
    *    responses:
    *      200:
    *        $ref: '#/components/responses/FeatureCollection'
-   *      401:
-   *        $ref: '#/components/responses/UnauthorizedError'
    */
   router.get('/', async (req: Request, res: Response) => {
     try {
       const zones = await zoneService.getAllZones();
       res.status(200).send(zones);
+    } catch (e) {
+      return handleError(e, res);
+    }
+  });
+
+  /**
+   * @swagger
+   * /zones/{id}/delivery:
+   *  get:
+   *    summary: Get all delivery zones related to a distribution zone
+   *    description: "Attempt to fetch all related delivery zones to a distribution zone"
+   *    tags:
+   *      - Zones
+   *    consumes: application/json
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/FeatureCollection'
+   */
+  router.get('/:id/delivery', async (req: Request<IdParamsType>, res: Response) => {
+    try {
+      const { id } = req.params;
+      const deliveryZones = await zoneService.getDeliveryZones(id);
+      res.status(200).send(deliveryZones);
+    } catch (e) {
+      return handleError(e, res);
+    }
+  });
+
+  /**
+   * @swagger
+   * /zones/{id}/distribution:
+   *  get:
+   *    summary: Get all distribution zones related to a delivery zone
+   *    description: "Attempt to fetch all related distribution zones to a delivery zone"
+   *    tags:
+   *      - Zones
+   *    consumes: application/json
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/FeatureCollection'
+   */
+  router.get('/:id/distribution', async (req: Request<IdParamsType>, res: Response) => {
+    try {
+      const { id } = req.params;
+      const deliveryZones = await zoneService.getDistributionZones(id);
+      res.status(200).send(deliveryZones);
     } catch (e) {
       return handleError(e, res);
     }
@@ -90,14 +134,16 @@ export const zoneRoutes = () => {
   router.get('/events', async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
     try {
       const names = req.query.names?.split(',');
-      const orgNumbers = req.query.orgNumbers?.split(',');
+      const organisations = req.query.organisations?.split(',');
       const areas = req.query.areas?.split(',');
       const weekdays = req.query.weekdays?.split(',');
+      const distributors = req.query.distributors?.split(',');
       const results = await eventService.getEvents({
         names,
-        orgNumbers,
+        organisations,
         areas,
         weekdays,
+        distributors,
       });
       res.status(200).send(results);
     } catch (e) {

@@ -102,6 +102,15 @@ components:
           type: array
           items:
             type: string
+        distributors:
+          type: array
+          items:
+            type: object
+            properties:
+              orgNumber:
+                type: string
+              name:
+                type: string
     IOrganisationResponse:
       type: object
       properties:
