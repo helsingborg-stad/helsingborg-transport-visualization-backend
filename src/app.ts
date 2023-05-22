@@ -18,7 +18,7 @@ export default async () => {
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(cors());
 
-  if (config.env === 'development') {
+  if (config.env === 'development' || config.env === 'staging') {
     apiDocs(app);
     app.use(devRequestLogger);
   }

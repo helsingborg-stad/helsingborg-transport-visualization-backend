@@ -1,4 +1,4 @@
-import { EventResponseType, IEvent, Event } from '@root/entities';
+import { EventResponseType, IEvent, Event, ZoneType } from '@root/entities';
 import {
   IEventRepository,
   EventRepository,
@@ -9,6 +9,7 @@ import {
 } from '@root/repositories';
 import { FilterQueries, CreateEventBody } from './types';
 import { toEventDTO } from './event.dto';
+import StatusError from '@root/utils/statusError';
 
 export interface IEventService {
   getEvents(filter: FilterQueries): Promise<EventResponseType[]>;
@@ -33,6 +34,9 @@ export class EventService implements IEventService {
   async createEvent(zoneId: string, orgNumber: string, requestBody: CreateEventBody): Promise<IEvent> {
     const { trackingId, enteredAt, exitedAt, distributionZoneId } = requestBody;
     const zone = await this.zoneRepo.getZoneById(zoneId);
+    if (zone.type === ZoneType.DISTRIBUTION && distributionZoneId) {
+      throw new StatusError(400, 'Event for distribution zone cannot have distributionZoneId');
+    }
     const newEvent = new Event(trackingId, new Date(enteredAt), new Date(exitedAt));
     newEvent.setZone(zone);
     newEvent.orgNumber = orgNumber;
