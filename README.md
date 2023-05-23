@@ -57,3 +57,18 @@ Run tests:
 ```shell
 npm test
 ```
+
+Swagger documentation is available at `/api-docs`
+
+Good to know:
+If you run in to the following error on setup with docker:
+
+```shell
+/path/to/local/module/node_modules/bcrypt/lib/binding/napi-v3/bcrypt_lib.node: invalid ELF header
+```
+
+Execute the following command in the docker container for backend:
+
+```shell
+npm uninstall bcrypt && npm install bcrypt
+```
