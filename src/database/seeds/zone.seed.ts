@@ -2,7 +2,7 @@
 import { Connection } from 'typeorm';
 import { Zone, Organisation, ZoneType } from '@root/entities';
 
-const buildZones = async (amount: number, orgs: Organisation[]) => {
+const buildZones = async (amount: number, orgs: Organisation[], zoneType: ZoneType) => {
   const orgId = orgs[0].id;
   const zonesList = [...Array(amount)].map(async (_, index) => {
     const zone = new Zone(
@@ -24,7 +24,7 @@ const buildZones = async (amount: number, orgs: Organisation[]) => {
     zone.name = `Zone ${index}`;
     zone.address = `Address ${index}`;
     zone.area = `Area ${index}`;
-    zone.type = ZoneType.DISTRIBUTION;
+    zone.type = zoneType;
 
     return zone;
   });
@@ -33,6 +33,9 @@ const buildZones = async (amount: number, orgs: Organisation[]) => {
 
 export const zoneSeeder = async (connection: Connection) => {
   const orgs = await connection.getRepository(Organisation).find();
-  const zonesList = await buildZones(10, orgs);
+  const zonesList = [
+    ...(await buildZones(10, orgs, ZoneType.DISTRIBUTION)),
+    ...(await buildZones(10, orgs, ZoneType.DELIVERY)),
+  ];
   return connection.createQueryBuilder().insert().into(Zone).values(zonesList).execute();
 };
