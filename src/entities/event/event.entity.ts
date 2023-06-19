@@ -42,7 +42,7 @@ export class Event implements IEvent {
   @Column({ nullable: true })
   zoneId: string;
 
-  @ManyToOne(() => Zone)
+  @ManyToOne(() => Zone, (zone) => zone.events, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'distributionZoneId' })
   distributionZone: Zone;
   @Column({ nullable: true })
