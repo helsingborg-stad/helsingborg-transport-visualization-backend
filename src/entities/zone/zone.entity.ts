@@ -1,7 +1,8 @@
-import { Entity, Column, Index, PrimaryColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, Index, PrimaryColumn, CreateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { IZone, ZoneType } from './types';
 import { Polygon } from 'geojson';
 import { IOrganisation, Organisation } from '../organisation';
+import { IEvent, Event } from '../event';
 
 @Entity('zones')
 export class Zone implements IZone {
@@ -32,7 +33,10 @@ export class Zone implements IZone {
   })
   polygon: Polygon;
 
-  @ManyToOne(() => Organisation)
+  @OneToMany(() => Event, (event) => event)
+  events: IEvent[];
+
+  @ManyToOne(() => Organisation, (organisation) => organisation.zones, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'organisationId' })
   organisation: IOrganisation;
   @Column()

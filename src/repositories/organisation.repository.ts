@@ -11,6 +11,7 @@ export interface IOrganisationRepository {
   findByForgotPasswordToken: (token: string) => Promise<IOrganisation | null>;
   save: (organisation: IOrganisation) => Promise<IOrganisation>;
   getAllOrganisations: () => Promise<OrganisationResponse[]>;
+  deleteOrganisation: (id: string) => Promise<any>;
 }
 
 export class OrganisationRepository implements IOrganisationRepository {
@@ -59,5 +60,9 @@ export class OrganisationRepository implements IOrganisationRepository {
         forgotPasswordTokenExpiration: MoreThanOrEqual(new Date()),
       },
     });
+  }
+
+  async deleteOrganisation(id: string): Promise<any> {
+    return this.repo.delete(id);
   }
 }
