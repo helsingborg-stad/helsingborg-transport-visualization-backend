@@ -1,5 +1,7 @@
 components:
   responses:
+    NoContent:
+      description: No Content
     OK:
       description: OK
     Created:

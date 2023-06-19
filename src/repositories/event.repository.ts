@@ -7,6 +7,7 @@ export interface IEventRepository {
   findFilterValues: () => Promise<FilterTypeResponse>;
   filterEvents: (filter: FilterQueries) => Promise<IEvent[]>;
   save: (event: IEvent) => Promise<IEvent>;
+  deleteByOrgNumber: (orgNumber: string) => Promise<void>;
 }
 
 export class EventRepository implements IEventRepository {
@@ -77,14 +78,13 @@ export class EventRepository implements IEventRepository {
       query.andWhere('EXTRACT(DOW FROM event.enteredAt) IN (:...weekdays)', { weekdays: filter.weekdays });
     }
 
-    if(filter.from) {
+    if (filter.from) {
       query.andWhere('event.enteredAt >= :from', { from: filter.from });
     }
     if (filter.to) {
       const to = new Date(filter.to);
       to.setDate(to.getDate() + 1);
       query.andWhere('event.enteredAt <= :to', { to });
-
     }
 
     if (filter.timeInterval) {
@@ -106,5 +106,9 @@ export class EventRepository implements IEventRepository {
 
   async save(event: IEvent): Promise<IEvent> {
     return this.repo.save(event);
+  }
+
+  async deleteByOrgNumber(orgNumber: string): Promise<void> {
+    await this.repo.delete({ orgNumber });
   }
 }
