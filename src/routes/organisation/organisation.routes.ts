@@ -3,6 +3,8 @@ import { handleError } from '@root/utils/handleError';
 import { IOrganisationService, OrganisationService } from '@domains/organisation';
 import { isAuth } from '@root/middlewares/isAuth';
 import { isPasswordAuthenticated } from '@root/middlewares/isPasswordAuthenticated';
+import { updateOrganisationValidation } from './validation';
+import { PatchOrganisationBody } from './types';
 
 export const organisationRoutes = () => {
   const router = Router();
@@ -34,7 +36,7 @@ export const organisationRoutes = () => {
    * @swagger
    * /organisations/{id}:
    *  delete:
-   *    summary: Delete organisation
+   *    summary: Delete organisation by ID
    *    description: "Attempt to delete organisation with cascading delete of zones and events"
    *    tags:
    *      - Organisations
@@ -54,6 +56,41 @@ export const organisationRoutes = () => {
       return handleError(e, res);
     }
   });
+
+  /**
+   * @swagger
+   * /organisations/{id}:
+   *  patch:
+   *    summary: Update organisation by ID
+   *    description: "Attempt to update organisation"
+   *    tags:
+   *      - Organisations
+   *    consumes: application/json
+   *    requestBody:
+   *     content:
+   *      $ref: '#/components/requestBodies/PatchOrganisation'
+   *    responses:
+   *      200:
+   *       $ref: '#/components/responses/Organisation'
+   */
+  router.patch(
+    '/:id',
+    isAuth,
+    isPasswordAuthenticated(true),
+    updateOrganisationValidation,
+    async (req: Request<any, null, PatchOrganisationBody>, res: Response) => {
+      try {
+        const { id } = req.params;
+        //@ts-ignore
+        const { id: userId } = req.auth;
+        console.log(req.body);
+        const updatedOrganisation = await organisationService.updateOrganisation(id, userId, req.body);
+        res.status(200).send(updatedOrganisation);
+      } catch (e) {
+        return handleError(e, res);
+      }
+    }
+  );
 
   return router;
 };
