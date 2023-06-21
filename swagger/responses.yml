@@ -68,6 +68,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/IFeatureCollection'
+    Organisation:
+      description: Organisation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/IOrganisationResponse'
     ListOfOrganisations:
       description: Organisation
       content:
