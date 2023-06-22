@@ -24,4 +24,8 @@ export const updateOrganisationValidation = validationMiddleware({
     type: 'string',
     presence: false,
   },
+  email: {
+    presence: false,
+    email: true,
+  },
 });

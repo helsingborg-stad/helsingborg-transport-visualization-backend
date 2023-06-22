@@ -35,6 +35,7 @@ export class OrganisationService implements IOrganisationService {
     if (body.pinCode) await organisation.setPinCode(body.pinCode);
     if (body.contactPerson) organisation.contactPerson = body.contactPerson;
     if (body.mobileNumber) organisation.mobileNumber = body.mobileNumber;
+    if (body.email) organisation.email = body.email;
     return this.orgRepo.save(organisation);
   }
 }
