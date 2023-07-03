@@ -3,4 +3,5 @@ export type UpdateOrganisationBody = {
   pinCode?: string;
   contactPerson?: string;
   mobileNumber?: string;
+  email?: string;
 };

@@ -3,4 +3,5 @@ export type PatchOrganisationBody = {
   mobileNumber?: string;
   password?: string;
   pinCode?: string;
+  email?: string;
 };

@@ -5,6 +5,8 @@ export type AuthDTO = {
   orgNumber: string;
   name: string;
   email: string;
+  contactPerson: string;
+  mobileNumber: string;
   token?: string;
   createdAt: Date;
   updatedAt?: Date;

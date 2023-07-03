@@ -72,6 +72,10 @@ components:
           type: string
         name:
           type: string
+        contactPerson:
+          type: string
+        mobileNumber:
+          type: string
         token:
           type: string
         createdAt:
