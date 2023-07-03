@@ -2,6 +2,7 @@ import { OrganisationResponse } from '@root/entities';
 import { OrganisationRepository, IOrganisationRepository, EventRepository, IEventRepository } from '@root/repositories';
 import { UpdateOrganisationBody } from './types';
 import StatusError from '@root/utils/statusError';
+import { toAuthDTO } from '../auth/auth.dto';
 
 export interface IOrganisationService {
   getAllOrganisations(): Promise<OrganisationResponse[]>;
@@ -36,6 +37,6 @@ export class OrganisationService implements IOrganisationService {
     if (body.contactPerson) organisation.contactPerson = body.contactPerson;
     if (body.mobileNumber) organisation.mobileNumber = body.mobileNumber;
     if (body.email) organisation.email = body.email;
-    return this.orgRepo.save(organisation);
+    return toAuthDTO(await this.orgRepo.save(organisation), true);
   }
 }
