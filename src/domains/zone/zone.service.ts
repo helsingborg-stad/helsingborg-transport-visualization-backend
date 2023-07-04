@@ -33,7 +33,11 @@ export class ZoneService implements IZoneService {
   }
 
   async getZonesByOrgId(orgId: string): Promise<FeatureCollection> {
-    return this.repo.findByOrgId(orgId);
+    const zones = await this.repo.findByOrgId(orgId);
+    if (!zones.features) {
+      throw new StatusError(404, 'No zones found');
+    }
+    return zones;
   }
 
   async getDeliveryZones(zoneId: string): Promise<FeatureCollection> {

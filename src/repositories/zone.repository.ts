@@ -15,24 +15,36 @@ export class ZoneRepository implements IZoneRepository {
   constructor(private repo: Repository<IZone> = buildRepository<IZone>(Zone)) {}
 
   async findByOrgId(orgId: string): Promise<FeatureCollection> {
-    return this.repo.query(`
+    const result = await this.repo.query(`
     SELECT json_build_object(
       'type', 'FeatureCollection',
       'features', json_agg(ST_AsGeoJSON(t.*)::json)
     )
-    FROM (
-      SELECT
-        id,
-        name,
-        address,
-        area,
-        type,
-        organisationId,
-        polygon
-      FROM zone
-      WHERE organisationId = '${orgId}'
+      FROM (
+        SELECT
+          id,
+          name,
+          address,
+          area,
+          type,
+          polygon,
+          (
+            SELECT json_build_object(
+              'id', id,
+              'orgNumber', "orgNumber",
+              'name', name,
+              'email', email,
+              'createdAt', "createdAt",
+              'updatedAt', "updatedAt",
+              'mobileNumber', "mobileNumber",
+              'contactPerson', "contactPerson"
+              ) AS "organisation" FROM organisations WHERE id = "organisationId"
+          )
+        FROM zones
+      WHERE "organisationId" = '${orgId}'
     ) t;
     `);
+    return result[0].json_build_object;
   }
 
   async saveAll(zones: IZone[]): Promise<void> {

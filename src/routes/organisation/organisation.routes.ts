@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { handleError } from '@root/utils/handleError';
 import { IOrganisationService, OrganisationService } from '@domains/organisation';
+import { IZoneService, ZoneService } from '@domains/zone';
 import { isAuth } from '@root/middlewares/isAuth';
 import { isPasswordAuthenticated } from '@root/middlewares/isPasswordAuthenticated';
 import { updateOrganisationValidation } from './validation';
@@ -9,6 +10,7 @@ import { PatchOrganisationBody } from './types';
 export const organisationRoutes = () => {
   const router = Router();
   const organisationService: IOrganisationService = new OrganisationService();
+  const zoneService: IZoneService = new ZoneService();
 
   /**
    * @swagger
@@ -31,6 +33,31 @@ export const organisationRoutes = () => {
       return handleError(e, res);
     }
   });
+
+  /**
+   * @swagger
+   * /organisations/{id}/zones:
+   *  get:
+   *    summary: Get all zones for organisation
+   *    description: "Attempt to fetch all zones for organisation"
+   *    tags:
+   *      - Zones
+   *      - Organisations
+   *    consumes: application/json
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/FeatureCollection'
+   */
+  router.get('/:id/zones', async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const zones = await zoneService.getZonesByOrgId(id);
+      res.status(200).send(zones);
+    }
+    catch (e) {
+      return handleError(e, res);
+    }
+  })
 
   /**
    * @swagger
