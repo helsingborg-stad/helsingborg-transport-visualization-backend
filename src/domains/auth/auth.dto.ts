@@ -10,6 +10,8 @@ export const toAuthDTO = async (
   orgNumber: organisation.orgNumber,
   email: organisation.email,
   name: organisation.name,
+  contactPerson: organisation.contactPerson,
+  mobileNumber: organisation.mobileNumber,
   token: buildToken ? await organisation.buildToken(isPasswordAuthenticated) : undefined,
   createdAt: organisation.createdAt,
   updatedAt: organisation.updatedAt,
