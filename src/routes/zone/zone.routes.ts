@@ -73,6 +73,34 @@ export const zoneRoutes = () => {
 
   /**
    * @swagger
+   * /zones/{id}:
+   *  delete:
+   *    summary: Delete zone by ID
+   *    description: "Attempt to delete zone with cascading delete of events"
+   *    tags:
+   *      - Zones
+   *    consumes: application/json
+   *    responses:
+   *      204:
+   *       $ref: '#/components/responses/NoContent'
+   */
+  router.delete('/:id', 
+  isAuth,
+  isPasswordAuthenticated(true),
+  async (req: Request<IdParamsType>, res: Response) => {
+    try{
+      const { id } = req.params;
+      //@ts-ignore
+      const { id: userId } = req.auth;
+      await zoneService.deleteZone(id, userId);
+      res.sendStatus(204);
+    } catch (e) {
+      return handleError(e, res);
+    }
+  });
+
+  /**
+   * @swagger
    * /zones/{id}/delivery:
    *  get:
    *    summary: Get all delivery zones related to a distribution zone
