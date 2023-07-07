@@ -35,7 +35,7 @@ export class ZoneService implements IZoneService {
   async getZonesByOrgId(orgId: string): Promise<FeatureCollection> {
     const zones = await this.repo.findByOrgId(orgId);
     if (!zones.features) {
-      throw new StatusError(404, 'No zones found');
+      zones.features = [];
     }
     return zones;
   }
@@ -43,7 +43,7 @@ export class ZoneService implements IZoneService {
   async getDeliveryZones(zoneId: string): Promise<FeatureCollection> {
     const zone = await this.repo.getZoneById(zoneId);
     if (!zone) {
-      throw new StatusError(404, 'Zone not found');
+      throw new StatusError(404, 'Zones not found');
     }
     return this.repo.getDeliveryZones(zoneId);
   }
@@ -51,7 +51,7 @@ export class ZoneService implements IZoneService {
   async getDistributionZones(zoneId: string): Promise<FeatureCollection> {
     const zone = await this.repo.getZoneById(zoneId);
     if (!zone) {
-      throw new StatusError(404, 'Zone not found');
+      throw new StatusError(404, 'Zones not found');
     }
 
     return this.repo.getDistributionZones(zoneId);
