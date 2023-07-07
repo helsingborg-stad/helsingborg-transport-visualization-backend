@@ -9,6 +9,7 @@ export interface IZoneService {
   getZonesByOrgId: (orgId: string) => Promise<FeatureCollection>;
   getDeliveryZones: (zoneId: string) => Promise<FeatureCollection>;
   getDistributionZones: (zoneId: string) => Promise<FeatureCollection>;
+  deleteZone: (zoneId: string, userId: string) => Promise<void>;
 }
 
 export class ZoneService implements IZoneService {
@@ -33,13 +34,17 @@ export class ZoneService implements IZoneService {
   }
 
   async getZonesByOrgId(orgId: string): Promise<FeatureCollection> {
-    return this.repo.findByOrgId(orgId);
+    const zones = await this.repo.findByOrgId(orgId);
+    if (!zones.features) {
+      zones.features = [];
+    }
+    return zones;
   }
 
   async getDeliveryZones(zoneId: string): Promise<FeatureCollection> {
     const zone = await this.repo.getZoneById(zoneId);
     if (!zone) {
-      throw new StatusError(404, 'Zone not found');
+      throw new StatusError(404, 'Zones not found');
     }
     return this.repo.getDeliveryZones(zoneId);
   }
@@ -47,9 +52,21 @@ export class ZoneService implements IZoneService {
   async getDistributionZones(zoneId: string): Promise<FeatureCollection> {
     const zone = await this.repo.getZoneById(zoneId);
     if (!zone) {
-      throw new StatusError(404, 'Zone not found');
+      throw new StatusError(404, 'Zones not found');
     }
 
     return this.repo.getDistributionZones(zoneId);
   }
+
+  async deleteZone(zoneId: string, userId: string): Promise<void> {
+    const zone = await this.repo.getZoneById(zoneId);
+    if (!zone) {
+      throw new StatusError(404, 'Zone not found');
+    }
+    if (zone.organisationId !== userId) {
+      throw new StatusError(401, 'Not authorized');
+    }
+    await this.repo.deleteZone(zoneId);
+  };
+  
 }

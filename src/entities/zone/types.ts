@@ -33,5 +33,5 @@ export type FeatureCollection = GeoJsonObject & {
         organisationId: string;
       };
     }
-  ];
+  ] | [];
 };
