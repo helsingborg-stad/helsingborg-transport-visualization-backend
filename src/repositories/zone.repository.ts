@@ -9,6 +9,7 @@ export interface IZoneRepository {
   getZoneById: (id: string) => Promise<IZone>;
   getDeliveryZones: (zoneId: string) => Promise<FeatureCollection>;
   getDistributionZones: (zoneId: string) => Promise<FeatureCollection>;
+  deleteZone: (zoneId: string) => Promise<void>;
 }
 
 export class ZoneRepository implements IZoneRepository {
@@ -161,5 +162,9 @@ export class ZoneRepository implements IZoneRepository {
       ) t;
     `);
     return result[0].json_build_object;
+  }
+
+  async deleteZone(zoneId: string): Promise<void> {
+    await this.repo.delete({ id: zoneId });
   }
 }

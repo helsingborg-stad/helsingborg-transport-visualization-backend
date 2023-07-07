@@ -9,6 +9,7 @@ export interface IZoneService {
   getZonesByOrgId: (orgId: string) => Promise<FeatureCollection>;
   getDeliveryZones: (zoneId: string) => Promise<FeatureCollection>;
   getDistributionZones: (zoneId: string) => Promise<FeatureCollection>;
+  deleteZone: (zoneId: string, userId: string) => Promise<void>;
 }
 
 export class ZoneService implements IZoneService {
@@ -56,4 +57,16 @@ export class ZoneService implements IZoneService {
 
     return this.repo.getDistributionZones(zoneId);
   }
+
+  async deleteZone(zoneId: string, userId: string): Promise<void> {
+    const zone = await this.repo.getZoneById(zoneId);
+    if (!zone) {
+      throw new StatusError(404, 'Zone not found');
+    }
+    if (zone.organisationId !== userId) {
+      throw new StatusError(401, 'Not authorized');
+    }
+    await this.repo.deleteZone(zoneId);
+  };
+  
 }
