@@ -49,6 +49,8 @@ export const zoneRoutes = () => {
     }
   );
 
+  //test
+
   /**
    * @swagger
    * /zones:
@@ -84,11 +86,8 @@ export const zoneRoutes = () => {
    *      204:
    *       $ref: '#/components/responses/NoContent'
    */
-  router.delete('/:id', 
-  isAuth,
-  isPasswordAuthenticated(true),
-  async (req: Request<IdParamsType>, res: Response) => {
-    try{
+  router.delete('/:id', isAuth, isPasswordAuthenticated(true), async (req: Request<IdParamsType>, res: Response) => {
+    try {
       const { id } = req.params;
       //@ts-ignore
       const { id: userId } = req.auth;
