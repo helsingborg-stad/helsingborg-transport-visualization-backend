@@ -30,7 +30,11 @@ export class ZoneService implements IZoneService {
       newZone.organisationId = orgId;
       return newZone;
     });
-    return this.repo.saveAll(zonesToSave);
+    try {
+      return await this.repo.saveAll(zonesToSave);
+    } catch (err) {
+      throw new StatusError(400, 'Zone already exists');
+    }
   }
 
   async getZonesByOrgId(orgId: string): Promise<FeatureCollection> {
@@ -67,6 +71,5 @@ export class ZoneService implements IZoneService {
       throw new StatusError(401, 'Not authorized');
     }
     await this.repo.deleteZone(zoneId);
-  };
-  
+  }
 }

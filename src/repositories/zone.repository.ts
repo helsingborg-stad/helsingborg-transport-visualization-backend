@@ -49,7 +49,11 @@ export class ZoneRepository implements IZoneRepository {
   }
 
   async saveAll(zones: IZone[]): Promise<void> {
-    await this.repo.save(zones);
+    try {
+      await this.repo.save(zones);
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
   async getAllZones(): Promise<FeatureCollection> {
