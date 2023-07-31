@@ -49,8 +49,6 @@ export const zoneRoutes = () => {
     }
   );
 
-  //test
-
   /**
    * @swagger
    * /zones:
