@@ -33,6 +33,12 @@ export class Zone implements IZone {
   })
   polygon: Polygon;
 
+  @Column({ type: 'float', nullable: true })
+  lat: number;
+
+  @Column({ type: 'float', nullable: true })
+  lng: number;
+
   @OneToMany(() => Event, (event) => event)
   events: IEvent[];
 

@@ -13,6 +13,8 @@ export type ZoneCreateType = GeoJsonObject & {
         area: string;
         type: ZoneType;
         organisationId: string;
+        lat: number | null;
+        lng: number | null;
       };
     }
   ];
