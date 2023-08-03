@@ -13,6 +13,8 @@ export interface IZone {
   area: string;
   type: ZoneType;
   polygon: Polygon;
+  lat: number | null;
+  lng: number | null;
   createdAt: Date;
   organisationId: string;
   organisation: IOrganisation;
@@ -20,18 +22,22 @@ export interface IZone {
 
 export type FeatureCollection = GeoJsonObject & {
   type: 'FeatureCollection';
-  features: [
-    {
-      type: 'Feature';
-      geometry: Polygon;
-      properties: {
-        id: string;
-        name: string;
-        address: string;
-        area: string;
-        type: ZoneType;
-        organisationId: string;
-      };
-    }
-  ] | [];
+  features:
+    | [
+        {
+          type: 'Feature';
+          geometry: Polygon;
+          properties: {
+            id: string;
+            name: string;
+            address: string;
+            area: string;
+            type: ZoneType;
+            lat: number | null;
+            lng: number | null;
+            organisationId: string;
+          };
+        }
+      ]
+    | [];
 };
