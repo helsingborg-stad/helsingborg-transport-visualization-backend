@@ -29,6 +29,8 @@ export class ZoneRepository implements IZoneRepository {
           area,
           type,
           polygon,
+          lat,
+          lng,
           (
             SELECT json_build_object(
               'id', id,
@@ -70,6 +72,8 @@ export class ZoneRepository implements IZoneRepository {
           area,
           type,
           polygon,
+          lat,
+          lng,
           (
             SELECT json_build_object(
               'id', id,
@@ -108,6 +112,8 @@ export class ZoneRepository implements IZoneRepository {
           area,
           type,
           polygon,
+          lat,
+          lng,
           (
             SELECT json_build_object(
               'id', id,
@@ -145,6 +151,8 @@ export class ZoneRepository implements IZoneRepository {
           area,
           type,
           polygon,
+          lat,
+          lng,
           (
             SELECT json_build_object(
               'id', id,

@@ -25,9 +25,10 @@ export class ZoneService implements IZoneService {
       newZone.name = zone.properties.name;
       newZone.address = zone.properties.address;
       newZone.area = zone.properties.area;
-
       newZone.type = zone.properties.type;
       newZone.organisationId = orgId;
+      newZone.lat = zone.properties.lat;
+      newZone.lng = zone.properties.lng;
       return newZone;
     });
     try {
