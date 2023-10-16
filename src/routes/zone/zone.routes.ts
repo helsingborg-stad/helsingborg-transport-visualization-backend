@@ -186,8 +186,8 @@ export const zoneRoutes = () => {
    * @swagger
    * /zones/{id}/events:
    *  post:
-   *    summary: Add zones to the database
-   *    description: "Attempt to create zones based on given FeatureCollection"
+   *    summary: Add event related to a zone
+   *    description: "Attempt to create event related to a zone"
    *    tags:
    *      - Events
    *      - Zones
