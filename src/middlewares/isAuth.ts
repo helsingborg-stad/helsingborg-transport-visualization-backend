@@ -25,3 +25,4 @@ export const isAuth = async (request: Request<any>, response: Response, next: Ne
     return handleError(e, response);
   }
 };
+

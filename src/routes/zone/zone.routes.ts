@@ -20,6 +20,8 @@ export const zoneRoutes = () => {
    *    description: "Attempt to create zones based on given FeatureCollection"
    *    tags:
    *      - Zones
+   *    parameters:
+   *      - $ref: '#/components/headers/Authorization'
    *    consumes: application/json
    *    requestBody:
    *      content:
@@ -79,6 +81,9 @@ export const zoneRoutes = () => {
    *    description: "Attempt to delete zone with cascading delete of events"
    *    tags:
    *      - Zones
+   *    parameters:
+   *      - $ref: '#/components/headers/Authorization'
+   *      - $ref: '#/components/parameters/Id'
    *    consumes: application/json
    *    responses:
    *      204:
@@ -104,6 +109,8 @@ export const zoneRoutes = () => {
    *    description: "Attempt to fetch all related delivery zones to a distribution zone"
    *    tags:
    *      - Zones
+   *    parameters:
+   *      - $ref: '#/components/parameters/Id'
    *    consumes: application/json
    *    responses:
    *      200:
@@ -127,6 +134,8 @@ export const zoneRoutes = () => {
    *    description: "Attempt to fetch all related distribution zones to a delivery zone"
    *    tags:
    *      - Zones
+   *    parameters:
+   *      - $ref: '#/components/parameters/Id'
    *    consumes: application/json
    *    responses:
    *      200:
@@ -191,6 +200,8 @@ export const zoneRoutes = () => {
    *    tags:
    *      - Events
    *      - Zones
+   *    parameters:
+   *      - $ref: '#/components/parameters/Id'
    *    consumes: application/json
    *    requestBody:
    *      content:
