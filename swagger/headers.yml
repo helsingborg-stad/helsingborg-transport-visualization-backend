@@ -1,2 +1,10 @@
 components:
   headers:
+    Authorization:
+      name: authorization
+      in: header
+      required: true
+      description: JWT Bearer token
+      schema:
+        type: string
+        example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdhbml6YXRpb25JZCI6IjY0YTQxZGFiLTBjNjEtNDc4ZC04OGM3LWU3NGM3ZTE3NTFmOSIsImlhdCI6MTU4NjQ0NjQ4OSwiZXhw

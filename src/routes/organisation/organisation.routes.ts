@@ -43,6 +43,8 @@ export const organisationRoutes = () => {
    *    tags:
    *      - Zones
    *      - Organisations
+   *    parameters:
+   *      - $ref: '#/components/parameters/Id'
    *    consumes: application/json
    *    responses:
    *      200:
@@ -67,6 +69,9 @@ export const organisationRoutes = () => {
    *    description: "Attempt to delete organisation with cascading delete of zones and events"
    *    tags:
    *      - Organisations
+   *    parameters:
+   *      - $ref: '#/components/headers/Authorization'
+   *      - $ref: '#/components/parameters/Id'
    *    consumes: application/json
    *    responses:
    *      204:
@@ -92,6 +97,8 @@ export const organisationRoutes = () => {
    *    description: "Attempt to update organisation"
    *    tags:
    *      - Organisations
+   *    parameters:
+   *      - $ref: '#/components/parameters/Id'
    *    consumes: application/json
    *    requestBody:
    *     content:
