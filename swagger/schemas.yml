@@ -42,6 +42,11 @@ components:
                 required: true
                 description: Properties of feature
                 properties:
+                  id:
+                    type: string
+                    required: true
+                    description: Id of feature
+                    example: 64a41dab-0c61-478d-88c7-e74c7e1751f9
                   name:
                     type: string
                     required: true
@@ -63,6 +68,21 @@ components:
                     description: Type of feature
                     enum: [delivery, distribution]
                     example: delivery
+                  lat:
+                    type: number
+                    required: true
+                    description: Latitude of feature
+                    example: 13.404954
+                    nullable: true
+                  lng:
+                    type: number
+                    required: true
+                    description: Longitude of feature
+                    example: 13.404954
+                    nullable: true
+                  organisation:
+                    $ref: "#/components/schemas/IOrganisationResponse"
+
     ILoginResponse:
       type: object
       properties:
@@ -183,4 +203,4 @@ components:
         exitedAt:
           type: string
         organisation:
-          $ref: '#/components/schemas/IOrganisationResponse'
+          $ref: "#/components/schemas/IOrganisationResponse"
