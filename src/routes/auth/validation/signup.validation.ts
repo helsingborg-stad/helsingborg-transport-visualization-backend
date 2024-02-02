@@ -4,6 +4,10 @@ export const signupValidation = validationMiddleware({
   orgNumber: {
     presence: true,
     type: 'string',
+    format: {
+      pattern: /^[0-9]{10}$/,
+      message: 'must be 10 digits',
+    }
   },
   name: {
     presence: true,
