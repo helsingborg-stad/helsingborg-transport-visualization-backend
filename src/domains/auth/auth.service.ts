@@ -98,6 +98,6 @@ export class AuthService implements IAuthService {
     await newOrganisation.setPassword(password);
     await newOrganisation.setPinCode(pinCode);
 
-    return toAuthDTO(await this.authRepo.save(newOrganisation));
+    return toAuthDTO(await this.authRepo.save(newOrganisation), true);
   }
 }
