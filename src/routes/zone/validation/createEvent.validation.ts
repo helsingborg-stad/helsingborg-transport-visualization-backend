@@ -2,7 +2,15 @@ import { validationMiddleware } from '@root/utils/validationMiddleware';
 
 export const createEventValidation = validationMiddleware({
   trackingId: {
-    presence: true,
+    presence: false,
+    type: 'string',
+  },
+  sessionId: {
+    presence: false,
+    type: 'string',
+  },
+  deviceId: {
+    presence: false,
     type: 'string',
   },
   enteredAt: {

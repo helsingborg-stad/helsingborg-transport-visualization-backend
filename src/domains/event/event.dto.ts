@@ -4,7 +4,9 @@ export const toEventDTO = (event: IEvent, Organisations: IOrganisation[]): Event
   const org = Organisations.find((org) => org.orgNumber === event.orgNumber);
   return {
     id: event.id,
-    trackingId: event.trackingId,
+    sessionId: event.sessionId,
+    deviceId: event.deviceId,
+    os: event.os,
     zoneType: event.zoneType,
     address: event.address,
     name: event.name,

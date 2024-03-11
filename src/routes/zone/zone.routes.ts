@@ -217,14 +217,16 @@ export const zoneRoutes = () => {
   router.post(
     '/:id/events',
     isAuth,
-    isPasswordAuthenticated(false),
+    isPasswordAuthenticated(true),
     createEventValidation,
     async (req: Request<IdParamsType, null, CreateEventBody>, res: Response) => {
       try {
         //@ts-ignore
         const { orgNumber } = req.auth;
+        //get OS
+        const os = req.get('User-Agent');
         const { id } = req.params;
-        const result = await eventService.createEvent(id, orgNumber, req.body);
+        const result = await eventService.createEvent(id, orgNumber, os, req.body);
         res.status(201).send(result);
       } catch (e) {
         return handleError(e, res);

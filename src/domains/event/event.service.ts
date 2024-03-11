@@ -13,7 +13,7 @@ import StatusError from '@root/utils/statusError';
 
 export interface IEventService {
   getEvents(filter: FilterQueries): Promise<EventResponseType[]>;
-  createEvent(zoneId: string, orgNumber: string, requestBody: CreateEventBody): Promise<IEvent>;
+  createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent>;
 }
 
 export class EventService implements IEventService {
@@ -31,13 +31,18 @@ export class EventService implements IEventService {
     return events.map((event) => toEventDTO(event, organisations));
   }
 
-  async createEvent(zoneId: string, orgNumber: string, requestBody: CreateEventBody): Promise<IEvent> {
-    const { trackingId, enteredAt, exitedAt, distributionZoneId } = requestBody;
+  async createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent> {
+    const { trackingId, sessionId, deviceId, enteredAt, exitedAt, distributionZoneId } = requestBody;
     const zone = await this.zoneRepo.getZoneById(zoneId);
+    if(!zone) {
+      throw new StatusError(400, 'Zone not found');
+    }
     if (zone.type === ZoneType.DISTRIBUTION && distributionZoneId) {
       throw new StatusError(400, 'Event for distribution zone cannot have distributionZoneId');
     }
-    const newEvent = new Event(trackingId, new Date(enteredAt), new Date(exitedAt));
+    const newEvent = new Event(sessionId ?? trackingId, new Date(enteredAt), new Date(exitedAt));
+    newEvent.deviceId = deviceId ?? null;
+    newEvent.os = os;
     newEvent.setZone(zone);
     newEvent.orgNumber = orgNumber;
     newEvent.distributionZoneId = distributionZoneId;

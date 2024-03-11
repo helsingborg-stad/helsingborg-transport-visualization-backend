@@ -33,6 +33,8 @@ export type FilterEventQueryType = {
 
 export type CreateEventBody = {
   trackingId: string;
+  sessionId?: string;
+  deviceId?: string;
   distributionZoneId: string;
   enteredAt: Date;
   exitedAt: Date;
