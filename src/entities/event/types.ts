@@ -3,7 +3,9 @@ import { ZoneType, Zone } from '../zone';
 
 export interface IEvent {
   id: string;
-  trackingId: string;
+  sessionId: string;
+  deviceId: string | null;
+  os: string | null;
   zoneType: ZoneType;
   address: string;
   name: string;
@@ -33,7 +35,9 @@ export type FilterTypeResponse = {
 
 export type EventResponseType = {
   id: string;
-  trackingId: string;
+  sessionId: string;
+  deviceId: string | null;
+  os: string | null;
   zoneType: ZoneType;
   address: string;
   name: string;
