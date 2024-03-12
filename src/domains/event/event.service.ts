@@ -10,17 +10,20 @@ import {
 import { FilterQueries, CreateEventBody } from './types';
 import { toEventDTO } from './event.dto';
 import StatusError from '@root/utils/statusError';
+import { FileExport } from './fileExport';
+import { WorkBook } from 'xlsx';
 
 export interface IEventService {
   getEvents(filter: FilterQueries): Promise<EventResponseType[]>;
   createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent>;
+  exportEventsToExcel(events: EventResponseType[]): Promise<WorkBook>;
 }
 
 export class EventService implements IEventService {
   constructor(
     private repo: IEventRepository = new EventRepository(),
     private organisationRepo: IOrganisationRepository = new OrganisationRepository(),
-    private zoneRepo: IZoneRepository = new ZoneRepository()
+    private zoneRepo: IZoneRepository = new ZoneRepository(),
   ) {}
 
   async getEvents(filter: FilterQueries): Promise<EventResponseType[]> {
@@ -47,5 +50,26 @@ export class EventService implements IEventService {
     newEvent.orgNumber = orgNumber;
     newEvent.distributionZoneId = distributionZoneId;
     return this.repo.save(newEvent);
+  }
+
+  async exportEventsToExcel(events: EventResponseType[]): Promise<WorkBook>{
+    const excelFileWriter: FileExport = new FileExport();
+    excelFileWriter.setExportFields([
+      'sessionId',
+      'deviceId',
+      'os',
+      'zoneType',
+      'address',
+      'name',
+      'area',
+      'enteredAt',
+      'exitedAt',
+      'createdAt',
+      'organisation.name',
+      'distributionOrganisation.name'
+    ]);
+
+    const workBook = await excelFileWriter.exportEventsToExcel(events);
+    return workBook;
   }
 }
