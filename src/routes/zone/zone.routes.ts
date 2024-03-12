@@ -6,6 +6,7 @@ import { handleError } from '@root/utils/handleError';
 import { isAuth } from '@root/middlewares/isAuth';
 import { isPasswordAuthenticated } from '@root/middlewares/isPasswordAuthenticated';
 import { CreateZonesBody, FilterEventQueryType, CreateEventBody, IdParamsType } from './types';
+import { write } from 'xlsx';
 
 export const zoneRoutes = () => {
   const router = Router();
@@ -191,6 +192,51 @@ export const zoneRoutes = () => {
     }
   });
 
+    /**
+   * @swagger
+   * /zones/events/export:
+   *  get:
+   *    summary: Get events and export to excel
+   *    description: "Attempt to fetch events with export to excel"
+   *    tags:
+   *      - Events
+   *      - Zones
+   *    consumes: application/json
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/ExeclFile'
+   */
+  router.get('/events/export', async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
+    try {
+      const names = req.query.names?.split(',');
+      const organisations = req.query.organisations?.split(',');
+      const areas = req.query.areas?.split(',');
+      const weekdays = req.query.weekdays?.split(',');
+      const distributors = req.query.distributors?.split(',');
+      const timeInterval = req.query.timeInterval?.split('-');
+      const from = req.query.from;
+      const to = req.query.to;
+      const results = await eventService.getEvents({
+        names,
+        organisations,
+        areas,
+        weekdays,
+        distributors,
+        timeInterval,
+        from,
+        to,
+      });
+      const workBook = await eventService.exportEventsToExcel(results);
+      const buffer = write(workBook, { type: 'buffer', bookType: 'xlsx' });
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="events.xlsx"`);
+      res.status(200);
+      return res.end(buffer);
+    } catch (e) {
+      return handleError(e, res);
+    }
+  });
+
   /**
    * @swagger
    * /zones/{id}/events:
@@ -223,7 +269,6 @@ export const zoneRoutes = () => {
       try {
         //@ts-ignore
         const { orgNumber } = req.auth;
-        //get OS
         const os = req.get('User-Agent');
         const { id } = req.params;
         const result = await eventService.createEvent(id, orgNumber, os, req.body);
