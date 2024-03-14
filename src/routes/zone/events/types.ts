@@ -7,4 +7,5 @@ export type FilterEventQueryType = {
   from?: string;
   to?: string;
   timeInterval?: string;
+  groupBy?: 'sessionId';
 };
