@@ -90,6 +90,16 @@ components:
             type: array
             items:
               $ref: "#/components/schemas/IEventResponse"
+    ListOfGroupedEvents:
+      description: Events
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/IEventResponse"
     IEvent:
       description: Event
       content:

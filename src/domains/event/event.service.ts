@@ -17,6 +17,7 @@ export interface IEventService {
   getEvents(filter: FilterQueries): Promise<EventResponseType[]>;
   createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent>;
   exportEventsToExcel(events: EventResponseType[]): Promise<WorkBook>;
+  getGroupedEvents(filter: FilterQueries): Promise<EventResponseType[][]>;
 }
 
 export class EventService implements IEventService {
@@ -32,6 +33,23 @@ export class EventService implements IEventService {
     const organisations = await this.organisationRepo.findByOrgNumbers(uniqueOrgNumbers);
 
     return events.map((event) => toEventDTO(event, organisations));
+  }
+
+  async getGroupedEvents(filter: FilterQueries): Promise<EventResponseType[][]> {
+    const events = await this.repo.filterEvents(filter);
+    const uniqueOrgNumbers: string[] = [...new Set(events.map((event) => event.orgNumber))];
+    const organisations = await this.organisationRepo.findByOrgNumbers(uniqueOrgNumbers);
+
+    const groupedEvents = events.reduce((grouped, event) => {
+      const key = event.sessionId;
+      if (!grouped[key]) {
+        grouped[key] = [];
+      }
+      grouped[key].push(toEventDTO(event, organisations));
+      return grouped;
+    }, {});
+
+    return Object.values(groupedEvents);
   }
 
   async createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent> {
