@@ -10,17 +10,21 @@ import {
 import { FilterQueries, CreateEventBody } from './types';
 import { toEventDTO } from './event.dto';
 import StatusError from '@root/utils/statusError';
+import { FileExport } from './fileExport';
+import { WorkBook } from 'xlsx';
 
 export interface IEventService {
   getEvents(filter: FilterQueries): Promise<EventResponseType[]>;
-  createEvent(zoneId: string, orgNumber: string, requestBody: CreateEventBody): Promise<IEvent>;
+  createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent>;
+  exportEventsToExcel(events: EventResponseType[]): Promise<WorkBook>;
+  getGroupedEvents(filter: FilterQueries): Promise<EventResponseType[][]>;
 }
 
 export class EventService implements IEventService {
   constructor(
     private repo: IEventRepository = new EventRepository(),
     private organisationRepo: IOrganisationRepository = new OrganisationRepository(),
-    private zoneRepo: IZoneRepository = new ZoneRepository()
+    private zoneRepo: IZoneRepository = new ZoneRepository(),
   ) {}
 
   async getEvents(filter: FilterQueries): Promise<EventResponseType[]> {
@@ -31,16 +35,59 @@ export class EventService implements IEventService {
     return events.map((event) => toEventDTO(event, organisations));
   }
 
-  async createEvent(zoneId: string, orgNumber: string, requestBody: CreateEventBody): Promise<IEvent> {
-    const { trackingId, enteredAt, exitedAt, distributionZoneId } = requestBody;
+  async getGroupedEvents(filter: FilterQueries): Promise<EventResponseType[][]> {
+    const events = await this.repo.filterEvents(filter);
+    const uniqueOrgNumbers: string[] = [...new Set(events.map((event) => event.orgNumber))];
+    const organisations = await this.organisationRepo.findByOrgNumbers(uniqueOrgNumbers);
+
+    const groupedEvents = events.reduce((grouped, event) => {
+      const key = event.sessionId;
+      if (!grouped[key]) {
+        grouped[key] = [];
+      }
+      grouped[key].push(toEventDTO(event, organisations));
+      return grouped;
+    }, {});
+
+    return Object.values(groupedEvents);
+  }
+
+  async createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent> {
+    const { trackingId, sessionId, deviceId, enteredAt, exitedAt, distributionZoneId } = requestBody;
     const zone = await this.zoneRepo.getZoneById(zoneId);
+    if(!zone) {
+      throw new StatusError(400, 'Zone not found');
+    }
     if (zone.type === ZoneType.DISTRIBUTION && distributionZoneId) {
       throw new StatusError(400, 'Event for distribution zone cannot have distributionZoneId');
     }
-    const newEvent = new Event(trackingId, new Date(enteredAt), new Date(exitedAt));
+    const newEvent = new Event(sessionId ?? trackingId, new Date(enteredAt), new Date(exitedAt));
+    newEvent.deviceId = deviceId ?? null;
+    newEvent.os = os;
     newEvent.setZone(zone);
     newEvent.orgNumber = orgNumber;
     newEvent.distributionZoneId = distributionZoneId;
     return this.repo.save(newEvent);
+  }
+
+  async exportEventsToExcel(events: EventResponseType[]): Promise<WorkBook>{
+    const excelFileWriter: FileExport = new FileExport();
+    excelFileWriter.setExportFields([
+      'sessionId',
+      'deviceId',
+      'os',
+      'zoneType',
+      'address',
+      'name',
+      'area',
+      'enteredAt',
+      'exitedAt',
+      'createdAt',
+      'organisation.name',
+      'distributionOrganisation.name'
+    ]);
+
+    const workBook = await excelFileWriter.exportEventsToExcel(events);
+    return workBook;
   }
 }

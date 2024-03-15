@@ -8,10 +8,16 @@ export class Event implements IEvent {
   id: string;
 
   @Column()
-  trackingId: string;
+  sessionId: string;
+
+  @Column()
+  deviceId: string;
 
   @Column()
   orgNumber: string;
+
+  @Column()
+  os: string;
 
   @Column({
     type: 'varchar',
@@ -48,8 +54,8 @@ export class Event implements IEvent {
   @Column({ nullable: true })
   distributionZoneId: string;
 
-  constructor(trackingId: string, enteredAt: Date, exitedAt: Date) {
-    this.trackingId = trackingId;
+  constructor(sessionId: string, enteredAt: Date, exitedAt: Date) {
+    this.sessionId = sessionId;
     this.enteredAt = enteredAt;
     this.exitedAt = exitedAt;
   }

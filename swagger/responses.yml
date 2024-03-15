@@ -15,7 +15,7 @@ components:
             properties:
               message:
                 type: string
-                description: 'Error message'
+                description: "Error message"
     UnauthorizedError:
       description: Unauthorized
       content:
@@ -25,7 +25,7 @@ components:
             properties:
               message:
                 type: string
-                description: 'Error message'
+                description: "Error message"
     BadRequestError:
       description: BadRequest
       content:
@@ -35,10 +35,10 @@ components:
             properties:
               message:
                 type: string
-                description: 'Error message'
+                description: "Error message"
               data:
                 type: object
-                description: 'Object containing validation errors'
+                description: "Object containing validation errors"
     InternalError:
       description: InternalError
       content:
@@ -48,32 +48,32 @@ components:
             properties:
               message:
                 type: string
-                description: 'Error message'
+                description: "Error message"
     Auth:
       description: Auth response used for login.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ILoginResponse'
+            $ref: "#/components/schemas/ILoginResponse"
 
     EventFilterValues:
       description: Data used to filter events.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/IEventFilterValues'
+            $ref: "#/components/schemas/IEventFilterValues"
     FeatureCollection:
       description: Zones
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/IFeatureCollection'
+            $ref: "#/components/schemas/IFeatureCollection"
     Organisation:
       description: Organisation
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/IOrganisationResponse'
+            $ref: "#/components/schemas/IOrganisationResponse"
     ListOfOrganisations:
       description: Organisation
       content:
@@ -81,7 +81,7 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/IOrganisationResponse'
+              $ref: "#/components/schemas/IOrganisationResponse"
     ListOfEvents:
       description: Events
       content:
@@ -89,10 +89,27 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/IEventResponse'
+              $ref: "#/components/schemas/IEventResponse"
+    ListOfGroupedEvents:
+      description: Events
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/IEventResponse"
     IEvent:
       description: Event
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/IEventResponse'
+            $ref: "#/components/schemas/IEventResponse"
+    ExcelFile:
+      description: A response describing a file response
+      content:
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          schema:
+            type: string
+            format: binary

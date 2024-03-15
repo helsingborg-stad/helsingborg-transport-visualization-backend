@@ -157,8 +157,14 @@ components:
     IEventResponse:
       type: object
       properties:
-        trackingId:
+        sessionId:
           type: string
+        deviceId:
+          type: string
+          nullable: true
+        os:
+          type: string
+          nullable: true
         orgNumber:
           type: string
         zoneType:

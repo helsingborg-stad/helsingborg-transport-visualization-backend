@@ -5,12 +5,15 @@ import { IEventService, EventService } from '@root/domains/event';
 import { handleError } from '@root/utils/handleError';
 import { isAuth } from '@root/middlewares/isAuth';
 import { isPasswordAuthenticated } from '@root/middlewares/isPasswordAuthenticated';
-import { CreateZonesBody, FilterEventQueryType, CreateEventBody, IdParamsType } from './types';
+import { CreateZonesBody, CreateEventBody, IdParamsType } from './types';
+import { eventsRouter } from './events';
 
 export const zoneRoutes = () => {
   const router = Router();
   const zoneService: IZoneService = new ZoneService();
   const eventService: IEventService = new EventService();
+
+  router.use('/events', eventsRouter());
 
   /**
    * @swagger
@@ -153,46 +156,6 @@ export const zoneRoutes = () => {
 
   /**
    * @swagger
-   * /zones/events:
-   *  get:
-   *    summary: Get events
-   *    description: "Attempt to fetch events"
-   *    tags:
-   *      - Events
-   *      - Zones
-   *    consumes: application/json
-   *    responses:
-   *      200:
-   *        $ref: '#/components/responses/ListOfEvents'
-   */
-  router.get('/events', async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
-    try {
-      const names = req.query.names?.split(',');
-      const organisations = req.query.organisations?.split(',');
-      const areas = req.query.areas?.split(',');
-      const weekdays = req.query.weekdays?.split(',');
-      const distributors = req.query.distributors?.split(',');
-      const timeInterval = req.query.timeInterval?.split('-');
-      const from = req.query.from;
-      const to = req.query.to;
-      const results = await eventService.getEvents({
-        names,
-        organisations,
-        areas,
-        weekdays,
-        distributors,
-        timeInterval,
-        from,
-        to,
-      });
-      res.status(200).send(results);
-    } catch (e) {
-      return handleError(e, res);
-    }
-  });
-
-  /**
-   * @swagger
    * /zones/{id}/events:
    *  post:
    *    summary: Add event related to a zone
@@ -217,14 +180,15 @@ export const zoneRoutes = () => {
   router.post(
     '/:id/events',
     isAuth,
-    isPasswordAuthenticated(false),
+    isPasswordAuthenticated(true),
     createEventValidation,
     async (req: Request<IdParamsType, null, CreateEventBody>, res: Response) => {
       try {
         //@ts-ignore
         const { orgNumber } = req.auth;
+        const os = req.get('User-Agent');
         const { id } = req.params;
-        const result = await eventService.createEvent(id, orgNumber, req.body);
+        const result = await eventService.createEvent(id, orgNumber, os, req.body);
         res.status(201).send(result);
       } catch (e) {
         return handleError(e, res);

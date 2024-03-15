@@ -9,8 +9,14 @@ export type FilterQueries = {
   timeInterval?: string[];
 };
 
+export type FilterQueriesGroupedBy = FilterQueries & {
+  groupBy: 'sessionId';
+}
+
 export type CreateEventBody = {
   trackingId: string;
+  sessionId?: string;
+  deviceId?: string;
   distributionZoneId: string;
   enteredAt: Date;
   exitedAt: Date;
