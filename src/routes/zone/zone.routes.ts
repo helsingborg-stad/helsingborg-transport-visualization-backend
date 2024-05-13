@@ -180,7 +180,7 @@ export const zoneRoutes = () => {
   router.post(
     '/:id/events',
     isAuth,
-    isPasswordAuthenticated(true),
+    isPasswordAuthenticated(false),
     createEventValidation,
     async (req: Request<IdParamsType, null, CreateEventBody>, res: Response) => {
       try {
