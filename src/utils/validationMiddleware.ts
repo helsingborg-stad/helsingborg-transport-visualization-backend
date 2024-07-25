@@ -1,3 +1,4 @@
+import { NextFunction, Response, Request } from 'express';
 import validate from 'validate.js';
 
 validate.validators.geojsonFeatures = (value: any[]) => {
@@ -47,27 +48,27 @@ validate.validators.geojsonFeatures = (value: any[]) => {
  * @return {function(...[*]=)}
  */
 export const validationMiddleware =
-  (rules) =>
-  async ({ body }, res, next) => {
-    try {
-      await validate.async(body, rules, { cleanAttributes: true });
-      return next();
-    } catch (e) {
-      //log whole error object
-      console.log(e);
-      return res.status(400).send({
-        message: 'Validation Error',
-        data: e,
-      });
-    }
-  };
+  (rules: any) =>
+    async ({ body }: Request, res: Response, next: NextFunction) => {
+      try {
+        await validate.async(body, rules, { cleanAttributes: true });
+        return next();
+      } catch (e) {
+        //log whole error object
+        console.log(e);
+        return res.status(400).send({
+          message: 'Validation Error',
+          data: e,
+        });
+      }
+    };
 
 /**
  * Used to add async validators.
  * @param validatorName
  * @param handler
  */
-export const addAsyncValidator = (validatorName, handler) => {
+export const addAsyncValidator = (validatorName: string, handler: () => any) => {
   // @ts-ignore
   validate.validators[validatorName] = (value) => new validate.Promise(handler(value));
 };

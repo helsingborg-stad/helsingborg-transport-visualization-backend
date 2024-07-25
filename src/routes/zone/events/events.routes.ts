@@ -21,31 +21,33 @@ export const eventsRouter = () => {
    *      200:
    *        $ref: '#/components/responses/ListOfEvents'
    */
-  router.get('/', async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
-    try {
-      const names = req.query.names?.split(',');
-      const organisations = req.query.organisations?.split(',');
-      const areas = req.query.areas?.split(',');
-      const weekdays = req.query.weekdays?.split(',');
-      const distributors = req.query.distributors?.split(',');
-      const timeInterval = req.query.timeInterval?.split('-');
-      const from = req.query.from;
-      const to = req.query.to;
-      const results = await eventService.getEvents({
-        names,
-        organisations,
-        areas,
-        weekdays,
-        distributors,
-        timeInterval,
-        from,
-        to,
-      });
-      res.status(200).send(results);
-    } catch (e) {
-      return handleError(e, res);
-    }
-  });
+  router.get(
+    '/',
+    async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
+      try {
+        const names = req.query.names?.split(',');
+        const organisations = req.query.organisations?.split(',');
+        const areas = req.query.areas?.split(',');
+        const weekdays = req.query.weekdays?.split(',');
+        const distributors = req.query.distributors?.split(',');
+        const timeInterval = req.query.timeInterval?.split('-');
+        const from = req.query.from;
+        const to = req.query.to;
+        const results = await eventService.getEvents({
+          names,
+          organisations,
+          areas,
+          weekdays,
+          distributors,
+          timeInterval,
+          from,
+          to,
+        });
+        res.status(200).send(results);
+      } catch (e) {
+        return handleError(e, res);
+      }
+    });
 
   /**
    * @swagger
@@ -60,31 +62,33 @@ export const eventsRouter = () => {
    *      200:
    *        $ref: '#/components/responses/ListOfGroupedEvents'
    */
-  router.get('/grouped', async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
-    try {
-      const names = req.query.names?.split(',');
-      const organisations = req.query.organisations?.split(',');
-      const areas = req.query.areas?.split(',');
-      const weekdays = req.query.weekdays?.split(',');
-      const distributors = req.query.distributors?.split(',');
-      const timeInterval = req.query.timeInterval?.split('-');
-      const from = req.query.from;
-      const to = req.query.to;
-      const results = await eventService.getGroupedEvents({
-        names,
-        organisations,
-        areas,
-        weekdays,
-        distributors,
-        timeInterval,
-        from,
-        to,
-      });
-      res.status(200).send(results);
-    } catch (e) {
-      return handleError(e, res);
-    }
-  });
+  router.get(
+    '/grouped',
+    async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
+      try {
+        const names = req.query.names?.split(',');
+        const organisations = req.query.organisations?.split(',');
+        const areas = req.query.areas?.split(',');
+        const weekdays = req.query.weekdays?.split(',');
+        const distributors = req.query.distributors?.split(',');
+        const timeInterval = req.query.timeInterval?.split('-');
+        const from = req.query.from;
+        const to = req.query.to;
+        const results = await eventService.getGroupedEvents({
+          names,
+          organisations,
+          areas,
+          weekdays,
+          distributors,
+          timeInterval,
+          from,
+          to,
+        });
+        res.status(200).send(results);
+      } catch (e) {
+        return handleError(e, res);
+      }
+    });
 
   /**
    * @swagger
@@ -99,36 +103,38 @@ export const eventsRouter = () => {
    *      200:
    *        $ref: '#/components/responses/ExeclFile'
    */
-  router.get('/export', async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
-    try {
-      const names = req.query.names?.split(',');
-      const organisations = req.query.organisations?.split(',');
-      const areas = req.query.areas?.split(',');
-      const weekdays = req.query.weekdays?.split(',');
-      const distributors = req.query.distributors?.split(',');
-      const timeInterval = req.query.timeInterval?.split('-');
-      const from = req.query.from;
-      const to = req.query.to;
-      const results = await eventService.getEvents({
-        names,
-        organisations,
-        areas,
-        weekdays,
-        distributors,
-        timeInterval,
-        from,
-        to,
-      });
-      const workBook = await eventService.exportEventsToExcel(results);
-      const buffer = write(workBook, { type: 'buffer', bookType: 'xlsx' });
-      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', `attachment; filename="events.xlsx"`);
-      res.status(200);
-      return res.end(buffer);
-    } catch (e) {
-      return handleError(e, res);
-    }
-  });
+  router.get(
+    '/export',
+    async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
+      try {
+        const names = req.query.names?.split(',');
+        const organisations = req.query.organisations?.split(',');
+        const areas = req.query.areas?.split(',');
+        const weekdays = req.query.weekdays?.split(',');
+        const distributors = req.query.distributors?.split(',');
+        const timeInterval = req.query.timeInterval?.split('-');
+        const from = req.query.from;
+        const to = req.query.to;
+        const results = await eventService.getEvents({
+          names,
+          organisations,
+          areas,
+          weekdays,
+          distributors,
+          timeInterval,
+          from,
+          to,
+        });
+        const workBook = await eventService.exportEventsToExcel(results);
+        const buffer = write(workBook, { type: 'buffer', bookType: 'xlsx' });
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment; filename="events.xlsx"`);
+        res.status(200);
+        return res.end(buffer);
+      } catch (e) {
+        return handleError(e, res);
+      }
+    });
 
   return router;
 };

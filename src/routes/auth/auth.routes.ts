@@ -28,17 +28,20 @@ export const authRoutes = () => {
    *      401:
    *        $ref: '#/components/responses/UnauthorizedError'
    */
-  router.post('/login', loginValidation, async (req: Request<null, null, LoginBody>, res: Response) => {
-    try {
-      const { identifier, password, pinCode } = req.body;
-      const response = password
-        ? await authService.loginByPassword(identifier, password)
-        : await authService.loginByPinCode(identifier, pinCode);
-      res.status(200).send(response);
-    } catch (e) {
-      return handleError(e, res);
-    }
-  });
+  router.post(
+    '/login',
+    loginValidation,
+    async (req: Request<null, null, LoginBody>, res: Response) => {
+      try {
+        const { identifier, password, pinCode } = req.body;
+        const response = password
+          ? await authService.loginByPassword(identifier, password)
+          : await authService.loginByPinCode(identifier, pinCode);
+        res.status(200).send(response);
+      } catch (e) {
+        return handleError(e, res);
+      }
+    });
 
   /**
    * @swagger
@@ -60,14 +63,17 @@ export const authRoutes = () => {
    *      409:
    *        $ref: '#/components/responses/ConflictError'
    */
-  router.post('/signup', signupValidation, async (req: Request<null, null, SignupBody>, res: Response) => {
-    try {
-      const response = await authService.signup(req.body);
-      res.status(201).send(response);
-    } catch (e) {
-      return handleError(e, res);
-    }
-  });
+  router.post(
+    '/signup',
+    signupValidation,
+    async (req: Request<null, null, SignupBody>, res: Response) => {
+      try {
+        const response = await authService.signup(req.body);
+        res.status(201).send(response);
+      } catch (e) {
+        return handleError(e, res);
+      }
+    });
 
   /**
    * @swagger

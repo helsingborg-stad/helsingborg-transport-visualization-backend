@@ -20,14 +20,16 @@ export const filterRoutes = () => {
    *      200:
    *       $ref: '#/components/responses/EventFilterValues'
    */
-  router.get('/events', async (req: Request, res: Response) => {
-    try {
-      const response = await eventService.getUniqueFilterValuesFromEvents();
-      res.status(200).send(response);
-    } catch (e) {
-      return handleError(e, res);
-    }
-  });
+  router.get(
+    '/events',
+    async (req: Request, res: Response) => {
+      try {
+        const response = await eventService.getUniqueFilterValuesFromEvents();
+        res.status(200).send(response);
+      } catch (e) {
+        return handleError(e, res);
+      }
+    });
 
   return router;
 };
