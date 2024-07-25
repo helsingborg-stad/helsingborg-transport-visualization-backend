@@ -3,7 +3,7 @@ import { createZonesValidation, createEventValidation } from './validation';
 import { ZoneService, IZoneService } from '@domains/zone';
 import { IEventService, EventService } from '@root/domains/event';
 import { handleError } from '@root/utils/handleError';
-import { isAuth } from '@root/middlewares/isAuth';
+import { AuthRequest, isAuth } from '@root/middlewares/isAuth';
 import { isPasswordAuthenticated } from '@root/middlewares/isPasswordAuthenticated';
 import { CreateZonesBody, CreateEventBody, IdParamsType } from './types';
 import { eventsRouter } from './events';
@@ -42,12 +42,51 @@ export const zoneRoutes = () => {
     isAuth,
     isPasswordAuthenticated(true),
     createZonesValidation,
-    async (req: Request<null, null, CreateZonesBody>, res: Response) => {
+    async (req: Request<null, null, CreateZonesBody> & AuthRequest, res: Response) => {
       try {
-        //@ts-ignore
         const { id } = req.auth;
         await zoneService.createZones(req.body, id);
         res.status(201).send({ message: 'Zones created' });
+      } catch (e) {
+        return handleError(e, res);
+      }
+    }
+  );
+
+  /**
+   * @swagger
+   * /zones:
+   *  post:
+   *    summary: Edit zone with given id
+   *    description: "Attempt to edit zone with given id"
+   *    tags:
+   *      - Zones
+   *    parameters:
+   *      - $ref: '#/components/headers/Authorization'
+   *    consumes: application/json
+   *    requestBody:
+   *      content:
+   *        $ref: '#/components/requestBodies/FeatureCollection'
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/FeatureCollection'
+   *      400:
+   *        $ref: '#/components/responses/BadRequestError'
+   *      403:
+   *        $ref: '#/components/responses/ForbiddenError'
+   *      401:
+   *        $ref: '#/components/responses/UnauthorizedError'
+   */
+  router.patch(
+    '/',
+    isAuth,
+    isPasswordAuthenticated(true),
+    createZonesValidation,
+    async (req: Request<null, null, CreateZonesBody> & AuthRequest, res: Response) => {
+      try {
+        const { id } = req.auth;
+        await zoneService.createZones(req.body, id);
+        res.status(200).send({ message: 'Zones created' });
       } catch (e) {
         return handleError(e, res);
       }
@@ -92,17 +131,21 @@ export const zoneRoutes = () => {
    *      204:
    *       $ref: '#/components/responses/NoContent'
    */
-  router.delete('/:id', isAuth, isPasswordAuthenticated(true), async (req: Request<IdParamsType>, res: Response) => {
-    try {
-      const { id } = req.params;
-      //@ts-ignore
-      const { id: userId } = req.auth;
-      await zoneService.deleteZone(id, userId);
-      res.sendStatus(204);
-    } catch (e) {
-      return handleError(e, res);
+  router.delete(
+    '/:id',
+    isAuth,
+    isPasswordAuthenticated(true),
+    async (req: Request<IdParamsType> & AuthRequest, res: Response) => {
+      try {
+        const { id } = req.params;
+        const { id: userId } = req.auth;
+        await zoneService.deleteZone(id, userId);
+        res.sendStatus(204);
+      } catch (e) {
+        return handleError(e, res);
+      }
     }
-  });
+  );
 
   /**
    * @swagger
@@ -119,15 +162,17 @@ export const zoneRoutes = () => {
    *      200:
    *        $ref: '#/components/responses/FeatureCollection'
    */
-  router.get('/:id/delivery', async (req: Request<IdParamsType>, res: Response) => {
-    try {
-      const { id } = req.params;
-      const deliveryZones = await zoneService.getDeliveryZones(id);
-      res.status(200).send(deliveryZones);
-    } catch (e) {
-      return handleError(e, res);
-    }
-  });
+  router.get(
+    '/:id/delivery',
+    async (req: Request<IdParamsType>, res: Response) => {
+      try {
+        const { id } = req.params;
+        const deliveryZones = await zoneService.getDeliveryZones(id);
+        res.status(200).send(deliveryZones);
+      } catch (e) {
+        return handleError(e, res);
+      }
+    });
 
   /**
    * @swagger
@@ -144,15 +189,17 @@ export const zoneRoutes = () => {
    *      200:
    *        $ref: '#/components/responses/FeatureCollection'
    */
-  router.get('/:id/distribution', async (req: Request<IdParamsType>, res: Response) => {
-    try {
-      const { id } = req.params;
-      const deliveryZones = await zoneService.getDistributionZones(id);
-      res.status(200).send(deliveryZones);
-    } catch (e) {
-      return handleError(e, res);
-    }
-  });
+  router.get(
+    '/:id/distribution',
+    async (req: Request<IdParamsType>, res: Response) => {
+      try {
+        const { id } = req.params;
+        const deliveryZones = await zoneService.getDistributionZones(id);
+        res.status(200).send(deliveryZones);
+      } catch (e) {
+        return handleError(e, res);
+      }
+    });
 
   /**
    * @swagger
@@ -182,9 +229,8 @@ export const zoneRoutes = () => {
     isAuth,
     isPasswordAuthenticated(false),
     createEventValidation,
-    async (req: Request<IdParamsType, null, CreateEventBody>, res: Response) => {
+    async (req: Request<IdParamsType, null, CreateEventBody> & AuthRequest, res: Response) => {
       try {
-        //@ts-ignore
         const { orgNumber } = req.auth;
         const os = req.get('User-Agent');
         const { id } = req.params;
