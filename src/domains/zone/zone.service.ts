@@ -2,9 +2,11 @@ import { Zone, FeatureCollection } from '@root/entities';
 import { IZoneRepository, ZoneRepository } from '@root/repositories';
 import { ZoneCreateType, ZoneUpdateType } from './types';
 import StatusError from '@root/utils/statusError';
+import { QueryFailedError } from 'typeorm';
 
 export interface IZoneService {
   getAllZones: () => Promise<FeatureCollection>;
+  getZoneById: (zoneId: string) => Promise<FeatureCollection>;
   createZones: (zones: ZoneCreateType, orgId: string) => Promise<void>;
   updateZoneById: (zones: ZoneUpdateType, orgId: string, zoneId: string) => Promise<FeatureCollection>;
   getZonesByOrgId: (orgId: string) => Promise<FeatureCollection>;
@@ -45,7 +47,7 @@ export class ZoneService implements IZoneService {
     if (!zone) {
       throw new StatusError(404, 'Zone not found');
     }
-    if (zone.organisationId !== orgId) {
+    if (zone.organisation.id !== orgId) {
       throw new StatusError(403, 'Forbidden');
     }
     zone.name = zoneData.features[0].properties.name;
@@ -53,8 +55,19 @@ export class ZoneService implements IZoneService {
     zone.address = zoneData.features[0].properties.address;
     zone.area = zoneData.features[0].properties.area;
     zone.type = zoneData.features[0].properties.type;
-    await this.repo.save([zone]);
+    try {
+      await this.repo.save([zone]);
+
+    } catch (e) {
+      if (e instanceof QueryFailedError && e.driverError?.constraint?.includes('UQ')) {
+        throw new StatusError(409, 'GLN already exists');
+      }
+    }
     return await this.repo.getTransformedZoneById(zoneId);
+  }
+
+  async getZoneById(zoneId: string): Promise<FeatureCollection> {
+    return this.repo.getTransformedZoneById(zoneId);
   }
 
 

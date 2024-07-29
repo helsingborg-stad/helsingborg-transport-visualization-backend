@@ -56,7 +56,29 @@ export const zoneRoutes = () => {
   /**
    * @swagger
    * /zones:
-   *  post:
+   *  get:
+   *    summary: Get all zones
+   *    description: "Attempt to fetch all zones"
+   *    tags:
+   *      - Zones
+   *    consumes: application/json
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/FeatureCollection'
+   */
+  router.get('/', async (req: Request, res: Response) => {
+    try {
+      const zones = await zoneService.getAllZones();
+      res.status(200).send(zones);
+    } catch (e) {
+      return handleError(e, res);
+    }
+  });
+
+  /**
+   * @swagger
+   * /zones/{id}:
+   *  patch:
    *    summary: Edit zone with given id
    *    description: "Attempt to edit zone with given id"
    *    tags:
@@ -78,42 +100,21 @@ export const zoneRoutes = () => {
    *        $ref: '#/components/responses/UnauthorizedError'
    */
   router.patch(
-    '/',
+    '/:id',
     isAuth,
     isPasswordAuthenticated(true),
     createZonesValidation,
-    async (req: Request<null, null, CreateZonesBody> & AuthRequest, res: Response) => {
+    async (req: Request<IdParamsType, null, CreateZonesBody> & AuthRequest, res: Response) => {
       try {
-        const { id } = req.auth;
-        await zoneService.createZones(req.body, id);
+        const { id } = req.params;
+        const { id: orgId } = req.auth;
+        await zoneService.updateZoneById(req.body, orgId, id);
         res.status(200).send({ message: 'Zones created' });
       } catch (e) {
         return handleError(e, res);
       }
     }
   );
-
-  /**
-   * @swagger
-   * /zones:
-   *  get:
-   *    summary: Get all zones
-   *    description: "Attempt to fetch all zones"
-   *    tags:
-   *      - Zones
-   *    consumes: application/json
-   *    responses:
-   *      200:
-   *        $ref: '#/components/responses/FeatureCollection'
-   */
-  router.get('/', async (req: Request, res: Response) => {
-    try {
-      const zones = await zoneService.getAllZones();
-      res.status(200).send(zones);
-    } catch (e) {
-      return handleError(e, res);
-    }
-  });
 
   /**
    * @swagger
@@ -146,6 +147,34 @@ export const zoneRoutes = () => {
       }
     }
   );
+
+  /**
+   * @swagger
+   * /zones/{id}:
+   *  get:
+   *    summary: Get zone by id
+   *    description: "Attempt to fetch feature collection of zone by id"
+   *    tags:
+   *      - Zones
+   *    parameters:
+   *      - $ref: '#/components/parameters/Id'
+   *    consumes: application/json
+   *    responses:
+   *      200:
+   *        $ref: '#/components/responses/FeatureCollection'
+   */
+  router.get(
+    '/:id',
+    async (req: Request<IdParamsType>, res: Response) => {
+      try {
+        const { id } = req.params;
+        const zone = await zoneService.getZoneById(id);
+        res.status(200).send(zone);
+      } catch (e) {
+        return handleError(e, res);
+      }
+    }
+  )
 
   /**
    * @swagger

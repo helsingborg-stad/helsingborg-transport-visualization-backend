@@ -133,6 +133,7 @@ export class ZoneRepository implements IZoneRepository {
   async getZoneById(id: string): Promise<IZone> {
     return this.repo.findOne({
       where: { id },
+      relations: ['organisation'],
     });
   }
 
