@@ -8,6 +8,7 @@ export enum ZoneType {
 
 export interface IZone {
   id: string;
+  gln: string;
   name: string;
   address: string;
   area: string;
@@ -29,6 +30,7 @@ export type FeatureCollection = GeoJsonObject & {
           geometry: Polygon;
           properties: {
             id: string;
+            gln: string;
             name: string;
             address: string;
             area: string;

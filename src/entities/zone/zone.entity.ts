@@ -9,6 +9,9 @@ export class Zone implements IZone {
   @PrimaryColumn('uuid', { generated: 'uuid' })
   id: string;
 
+  @Column({ unique: true })
+  gln: string;
+
   @Column()
   name: string;
 
