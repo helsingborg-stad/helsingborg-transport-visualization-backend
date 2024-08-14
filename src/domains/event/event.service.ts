@@ -85,6 +85,10 @@ export class EventService implements IEventService {
     const events: IEvent[] = [];
     for (const row of rows) {
       const newEvent = new Event(row.sessionId, new Date(row.time), new Date(row.time));
+      const org = await this.organisationRepo.findByOrgNumber(row.orgNumber);
+      if(!org) {
+        throw new StatusError(400, `Organisation "${row.orgNumber}" not found`);
+      }
       newEvent.orgNumber = row.orgNumber;
       const zone = await this.zoneRepo.getZoneByGln(row.gln);
       if (!zone) {
