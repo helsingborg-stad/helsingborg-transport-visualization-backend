@@ -22,7 +22,16 @@ components:
               pattern: '/^(?!.*(\d)\1{2})(?!.*(\d)(\d)\2{2})[0-9]{6}$/'
               description: Organisations' pin code
               example: 123456
-
+    ImportPassword:
+      application/json:
+        schema:
+          type: object
+          properties:
+            password:
+              type: string
+              required: true
+              description: Password for importing events
+              example: Pa$sword00
     FeatureCollection:
       application/json:
         schema:
