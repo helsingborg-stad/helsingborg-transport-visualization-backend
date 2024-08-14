@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "./build",
     "rootDir": "src",
-    "lib": ["es2017"],
+    "lib": ["es2017", "DOM"],
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,

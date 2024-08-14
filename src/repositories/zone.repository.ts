@@ -7,6 +7,7 @@ export interface IZoneRepository {
   save: (zones: IZone[]) => Promise<void>;
   getAllZones: () => Promise<FeatureCollection>;
   getZoneById: (id: string) => Promise<IZone>;
+  getZoneByGln: (gln: string) => Promise<IZone>;
   getTransformedZoneById: (id: string) => Promise<FeatureCollection>;
   getDeliveryZones: (zoneId: string) => Promise<FeatureCollection>;
   getDistributionZones: (zoneId: string) => Promise<FeatureCollection>;
@@ -133,6 +134,13 @@ export class ZoneRepository implements IZoneRepository {
   async getZoneById(id: string): Promise<IZone> {
     return this.repo.findOne({
       where: { id },
+      relations: ['organisation'],
+    });
+  }
+
+  async getZoneByGln(gln: string): Promise<IZone> {
+    return this.repo.findOne({
+      where: { gln },
       relations: ['organisation'],
     });
   }
