@@ -8,10 +8,21 @@ export interface IEventRepository {
   filterEvents: (filter: FilterQueries) => Promise<IEvent[]>;
   save: (event: IEvent) => Promise<IEvent>;
   deleteByOrgNumber: (orgNumber: string) => Promise<void>;
+  findEvent(enteredAt: Date, orgNumber: string, zoneId: string): Promise<IEvent | null>;
 }
 
 export class EventRepository implements IEventRepository {
-  constructor(private repo: Repository<IEvent> = buildRepository<IEvent>(Event)) {}
+  constructor(private repo: Repository<IEvent> = buildRepository<IEvent>(Event)) { }
+
+  async findEvent(enteredAt: Date, orgNumber: string, zoneId: string): Promise<IEvent | null> {
+    return this.repo.findOne({
+      where: {
+        enteredAt,
+        orgNumber,
+        zoneId,
+      }
+    })
+  }
 
   async findFilterValues(): Promise<FilterTypeResponse> {
     const [uniqueEventData, uniqueDistributors] = await Promise.all([

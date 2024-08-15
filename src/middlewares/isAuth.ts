@@ -5,6 +5,7 @@ import { handleError } from '@utils/handleError';
 import logger from '@services/logger';
 import { getAuthUser } from '@utils/getAuthUser';
 import { TokenExpiredError } from 'jsonwebtoken';
+import { OrganisationTokenDestructured } from '@root/entities';
 
 export const isAuth = async (request: Request<any>, response: Response, next: NextFunction) => {
   try {
@@ -25,4 +26,8 @@ export const isAuth = async (request: Request<any>, response: Response, next: Ne
     return handleError(e, response);
   }
 };
+
+export type AuthRequest = {
+  auth: OrganisationTokenDestructured;
+}
 

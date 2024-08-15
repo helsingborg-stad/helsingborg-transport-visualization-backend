@@ -26,6 +26,16 @@ components:
               message:
                 type: string
                 description: "Error message"
+    ForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: "Error message"
     BadRequestError:
       description: BadRequest
       content:

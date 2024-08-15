@@ -9,6 +9,7 @@ export type CreateZonesBody = GeoJsonObject & {
       geometry: Polygon;
       properties: {
         name: string;
+        gln: string;
         address: string;
         area: string;
         type: ZoneType;

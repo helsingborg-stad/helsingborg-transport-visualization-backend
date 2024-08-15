@@ -4,16 +4,18 @@ import { buildRepository } from '@root/services/database';
 
 export interface IZoneRepository {
   findByOrgId: (orgId: string) => Promise<FeatureCollection>;
-  saveAll: (zones: IZone[]) => Promise<void>;
+  save: (zones: IZone[]) => Promise<void>;
   getAllZones: () => Promise<FeatureCollection>;
   getZoneById: (id: string) => Promise<IZone>;
+  getZoneByGln: (gln: string) => Promise<IZone>;
+  getTransformedZoneById: (id: string) => Promise<FeatureCollection>;
   getDeliveryZones: (zoneId: string) => Promise<FeatureCollection>;
   getDistributionZones: (zoneId: string) => Promise<FeatureCollection>;
   deleteZone: (zoneId: string) => Promise<void>;
 }
 
 export class ZoneRepository implements IZoneRepository {
-  constructor(private repo: Repository<IZone> = buildRepository<IZone>(Zone)) {}
+  constructor(private repo: Repository<IZone> = buildRepository<IZone>(Zone)) { }
 
   async findByOrgId(orgId: string): Promise<FeatureCollection> {
     const result = await this.repo.query(`
@@ -24,6 +26,7 @@ export class ZoneRepository implements IZoneRepository {
       FROM (
         SELECT
           id,
+          gln,
           name,
           address,
           area,
@@ -34,6 +37,7 @@ export class ZoneRepository implements IZoneRepository {
           (
             SELECT json_build_object(
               'id', id,
+              'gln', gln,
               'orgNumber', "orgNumber",
               'name', name,
               'email', email,
@@ -44,18 +48,14 @@ export class ZoneRepository implements IZoneRepository {
               ) AS "organisation" FROM organisations WHERE id = "organisationId"
           )
         FROM zones
-      WHERE "organisationId" = '${orgId}'
+      WHERE "organisationId" = $1
     ) t;
-    `);
+    `, [orgId]);
     return result[0].json_build_object;
   }
 
-  async saveAll(zones: IZone[]): Promise<void> {
-    try {
-      await this.repo.save(zones);
-    } catch (err) {
-      throw new Error(err);
-    }
+  async save(zones: IZone[]) {
+    await this.repo.save(zones);
   }
 
   async getAllZones(): Promise<FeatureCollection> {
@@ -67,6 +67,7 @@ export class ZoneRepository implements IZoneRepository {
       FROM (
         SELECT
           id,
+          gln,
           name,
           address,
           area,
@@ -77,6 +78,7 @@ export class ZoneRepository implements IZoneRepository {
           (
             SELECT json_build_object(
               'id', id,
+              'gln', gln,
               'orgNumber', "orgNumber",
               'name', name,
               'email', email,
@@ -92,9 +94,54 @@ export class ZoneRepository implements IZoneRepository {
     return result[0].json_build_object;
   }
 
+  async getTransformedZoneById(id: string): Promise<FeatureCollection> {
+    const result = await this.repo.query(`
+      SELECT json_build_object(
+        'type', 'FeatureCollection',
+        'features', json_agg(ST_AsGeoJSON(t.*)::json)
+      )
+      FROM (
+        SELECT
+          id,
+          gln,
+          name,
+          address,
+          area,
+          type,
+          polygon,
+          lat,
+          lng,
+          (
+            SELECT json_build_object(
+              'id', id,
+              'gln', gln,
+              'orgNumber', "orgNumber",
+              'name', name,
+              'email', email,
+              'createdAt', "createdAt",
+              'updatedAt', "updatedAt",
+              'mobileNumber', "mobileNumber",
+              'contactPerson', "contactPerson"
+              ) AS "organisation" FROM organisations WHERE id = "organisationId"
+          )
+        FROM zones
+        WHERE id = $1
+      ) t;
+    `, [id]);
+    return result[0].json_build_object;
+  }
+
   async getZoneById(id: string): Promise<IZone> {
     return this.repo.findOne({
       where: { id },
+      relations: ['organisation'],
+    });
+  }
+
+  async getZoneByGln(gln: string): Promise<IZone> {
+    return this.repo.findOne({
+      where: { gln },
+      relations: ['organisation'],
     });
   }
 
@@ -107,6 +154,7 @@ export class ZoneRepository implements IZoneRepository {
       FROM (
         SELECT
           id,
+          gln,
           name,
           address,
           area,
@@ -117,6 +165,7 @@ export class ZoneRepository implements IZoneRepository {
           (
             SELECT json_build_object(
               'id', id,
+              'gln', gln,
               'orgNumber', "orgNumber",
               'name', name,
               'email', email,
@@ -146,6 +195,7 @@ export class ZoneRepository implements IZoneRepository {
       FROM (
         SELECT
           id,
+          gln,
           name,
           address,
           area,
@@ -156,6 +206,7 @@ export class ZoneRepository implements IZoneRepository {
           (
             SELECT json_build_object(
               'id', id,
+              'gln', gln,
               'orgNumber', "orgNumber",
               'name', name,
               'email', email,
@@ -169,10 +220,10 @@ export class ZoneRepository implements IZoneRepository {
         WHERE id IN (
           SELECT "distributionZoneId"
           FROM events
-          WHERE "zoneId" = '${zoneId}'
+          WHERE "zoneId" = $1
         )
       ) t;
-    `);
+    `, [zoneId]);
     return result[0].json_build_object;
   }
 

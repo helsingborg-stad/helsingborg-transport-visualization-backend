@@ -12,12 +12,15 @@ import { toEventDTO } from './event.dto';
 import StatusError from '@root/utils/statusError';
 import { FileExport } from './fileExport';
 import { WorkBook } from 'xlsx';
+import { FileImport } from './fileImport';
 
 export interface IEventService {
   getEvents(filter: FilterQueries): Promise<EventResponseType[]>;
   createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent>;
+  importEventsFromExcel(fileBuffer: Buffer): Promise<IEvent[]>;
   exportEventsToExcel(events: EventResponseType[]): Promise<WorkBook>;
   getGroupedEvents(filter: FilterQueries): Promise<EventResponseType[][]>;
+  validateImportPassword(password: string): void;
 }
 
 export class EventService implements IEventService {
@@ -25,7 +28,7 @@ export class EventService implements IEventService {
     private repo: IEventRepository = new EventRepository(),
     private organisationRepo: IOrganisationRepository = new OrganisationRepository(),
     private zoneRepo: IZoneRepository = new ZoneRepository(),
-  ) {}
+  ) { }
 
   async getEvents(filter: FilterQueries): Promise<EventResponseType[]> {
     const events = await this.repo.filterEvents(filter);
@@ -55,7 +58,7 @@ export class EventService implements IEventService {
   async createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent> {
     const { trackingId, sessionId, deviceId, enteredAt, exitedAt, distributionZoneId } = requestBody;
     const zone = await this.zoneRepo.getZoneById(zoneId);
-    if(!zone) {
+    if (!zone) {
       throw new StatusError(400, 'Zone not found');
     }
     if (zone.type === ZoneType.DISTRIBUTION && distributionZoneId) {
@@ -70,7 +73,39 @@ export class EventService implements IEventService {
     return this.repo.save(newEvent);
   }
 
-  async exportEventsToExcel(events: EventResponseType[]): Promise<WorkBook>{
+  async importEventsFromExcel(fileBuffer: Buffer): Promise<IEvent[]> {
+    const excelFileReader: FileImport = new FileImport(
+      fileBuffer,
+      {
+        headerRow: 0,
+        dataRangeStart: 1,
+      }
+    );
+    const rows = await excelFileReader.getRows();
+    const events: IEvent[] = [];
+    for (const row of rows) {
+      const newEvent = new Event(row.sessionId, new Date(row.time), new Date(row.time));
+      const org = await this.organisationRepo.findByOrgNumber(row.orgNumber);
+      if(!org) {
+        throw new StatusError(400, `Organisation "${row.orgNumber}" not found`);
+      }
+      newEvent.orgNumber = row.orgNumber;
+      const zone = await this.zoneRepo.getZoneByGln(row.gln);
+      if (!zone) {
+        throw new StatusError(400, `Zone "${row.gln}" not found`);
+      }
+      newEvent.setZone(zone);
+      if (!(await this.repo.findEvent(newEvent.enteredAt, newEvent.orgNumber, zone.id))) {
+        events.push(newEvent);
+      }
+    }
+
+    //@ts-ignore
+    return await this.repo.save(events);
+  }
+
+
+  async exportEventsToExcel(events: EventResponseType[]): Promise<WorkBook> {
     const excelFileWriter: FileExport = new FileExport();
     excelFileWriter.setExportFields([
       'sessionId',
@@ -89,5 +124,11 @@ export class EventService implements IEventService {
 
     const workBook = await excelFileWriter.exportEventsToExcel(events);
     return workBook;
+  }
+
+  validateImportPassword(password: string): void {
+    if (password !== process.env.IMPORT_PASSWORD) {
+      throw new StatusError(401, 'Unauthorized');
+    }
   }
 }

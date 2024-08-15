@@ -8,6 +8,7 @@ export type ZoneCreateType = GeoJsonObject & {
       type: 'Feature';
       geometry: Polygon;
       properties: {
+        gln: string;
         name: string;
         address: string;
         area: string;
@@ -19,3 +20,5 @@ export type ZoneCreateType = GeoJsonObject & {
     }
   ];
 };
+
+export type ZoneUpdateType = ZoneCreateType;

@@ -2,7 +2,7 @@
 /* eslint-disable class-methods-use-this */
 import { WorkBook, WorkSheet, utils } from 'xlsx';
 
-export interface IFileOptions {
+export interface IFileWriteOptions {
   headerRow: number;
   dataRangeStart: number;
 }
@@ -18,7 +18,8 @@ export class ExcelFileWriter {
     sheets: {
       workSheet: WorkSheet,
       name: string,
-    }[] }) {
+    }[]
+  }) {
     sheets.forEach((sheet) => {
       utils.book_append_sheet(this.workBook, sheet.workSheet, sheet.name);
     });
@@ -73,7 +74,7 @@ export class ExcelFileWriter {
       workSheet[accessor] = [];
     }
     if (!workSheet[accessor][index]) {
-      workSheet[accessor][index] = { };
+      workSheet[accessor][index] = {};
     }
   }
 }
