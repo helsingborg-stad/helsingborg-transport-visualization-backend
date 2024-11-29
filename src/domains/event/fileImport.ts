@@ -27,6 +27,13 @@ export class FileImport {
             throw new StatusError(400, 'Excel file not read');
         }
         const rows = this.excelFileReader.getRows();
+        const headers = this.excelFileReader.getHeader();
+        const missingHeaders = Object.keys(this.keyMap).filter((key) => !headers.includes(key));
+        
+        
+        if (missingHeaders.length > 0) {
+            throw new StatusError(400, `Saknar kolumner: ${missingHeaders.join(', ')}`);
+        }
         return rows[0].map((row) => {
             const newRow = {};
             Object.keys(row).forEach((key) => {

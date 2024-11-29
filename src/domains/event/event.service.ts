@@ -13,6 +13,7 @@ import StatusError from '@root/utils/statusError';
 import { FileExport } from './fileExport';
 import { WorkBook } from 'xlsx';
 import { FileImport } from './fileImport';
+import { error } from 'console';
 
 export interface IEventService {
   getEvents(filter: FilterQueries): Promise<EventResponseType[]>;
@@ -83,21 +84,38 @@ export class EventService implements IEventService {
     );
     const rows = await excelFileReader.getRows();
     const events: IEvent[] = [];
+    const errors: {
+      row: number;
+      message: string;
+    }[] = [];
     for (const row of rows) {
+      if(!row.sessionId || row.sessionId === '') {
+        errors.push({ row: rows.indexOf(row) + 1, message: `"Leverans med" saknas` });
+      }
+      if(!row.time || row.time === '') {
+        errors.push({ row: rows.indexOf(row) + 1, message: `"Tidpunkt" saknas` });
+      }
       const newEvent = new Event(row.sessionId, new Date(row.time), new Date(row.time));
       const org = await this.organisationRepo.findByOrgNumber(row.orgNumber);
       if(!org) {
-        throw new StatusError(400, `Organisation "${row.orgNumber}" not found`);
+        errors.push({ row: rows.indexOf(row) + 1, message: `Organisationsnummer "${row.orgNumber}" hittades inte` });
       }
       newEvent.orgNumber = row.orgNumber;
       const zone = await this.zoneRepo.getZoneByGln(row.gln);
       if (!zone) {
-        throw new StatusError(400, `Zone "${row.gln}" not found`);
+        errors.push({ row: rows.indexOf(row) + 1, message: `Zon "${row.gln}" hittades inte` });
+      } else {
+        newEvent.setZone(zone);
+        if (!(await this.repo.findEvent(newEvent.enteredAt, newEvent.orgNumber, zone.id))) {
+          events.push(newEvent);
+        } else {
+          errors.push({ row: rows.indexOf(row) + 1, message: `Leverans existerar redan med "${row.orgNumber}" med tidpunkt "${row.time}"` });
+        }
       }
-      newEvent.setZone(zone);
-      if (!(await this.repo.findEvent(newEvent.enteredAt, newEvent.orgNumber, zone.id))) {
-        events.push(newEvent);
-      }
+    }
+
+    if(errors.length > 0) {
+      throw new StatusError(400, errors.map((error) => `rad ${error.row}: ${error.message}`).join('|'));
     }
 
     //@ts-ignore
