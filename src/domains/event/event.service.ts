@@ -97,8 +97,8 @@ export class EventService implements IEventService {
     const excelFileReader: FileImport = new FileImport(
       fileBuffer,
       {
-        headerRow: 0,
-        dataRangeStart: 1,
+        headerRow: 2,
+        dataRangeStart: 3,
       }
     );
     const rows = await excelFileReader.getRows();
@@ -111,10 +111,9 @@ export class EventService implements IEventService {
       if(!row.sessionId || row.sessionId === '') {
         errors.push({ row: rows.indexOf(row) + 1, message: `"Leverans med" saknas` });
       }
-      if (!row.time || row.time === '') {
+      //check that time is a valid date with format yyyy-mm-ddThh:mmZ
+      if (!row.time || row.time === '' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}Z$/.test(row.time)) {
         errors.push({ row: rows.indexOf(row) + 1, message: `"Tidpunkt" saknas` });
-      } else if (isNaN(Date.parse(row.time))) {
-        errors.push({ row: rows.indexOf(row) + 1, message: `"Tidpunkt" är inte ett giltigt datum och tid` });
       }
       const newEvent = new Event(row.sessionId, new Date(row.time), new Date(row.time));
       const org = await this.organisationRepo.findByOrgNumber(row.orgNumber);
