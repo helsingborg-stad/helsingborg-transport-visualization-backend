@@ -37,6 +37,12 @@ export class EventService implements IEventService {
     const currentOrg = await this.organisationRepo.findById(orgId);
     if (!currentOrg.isPublic) {
       events = events.filter((event) => event.orgNumber === currentOrg.orgNumber);
+    } else {
+      // remove all events that are private
+      events = events.filter((event) => {
+        const org = organisations.find((org) => org.orgNumber === event.orgNumber);
+        return org.isPublic;
+      });
     }
 
     return events.map((event) => toEventDTO(event, organisations));
@@ -49,6 +55,12 @@ export class EventService implements IEventService {
     const currentOrg = await this.organisationRepo.findById(orgId);
     if (!currentOrg.isPublic) {
       events = events.filter((event) => event.orgNumber === currentOrg.orgNumber);
+    } else {
+      // remove all events that are private
+      events = events.filter((event) => {
+        const org = organisations.find((org) => org.orgNumber === event.orgNumber);
+        return org.isPublic;
+      });
     }
     
     const groupedEvents = events.reduce((grouped, event) => {
