@@ -38,6 +38,9 @@ export class Organisation implements IOrganisation {
   @Column()
   forgotPasswordTokenExpiration?: Date;
 
+  @Column()
+  isPublic: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

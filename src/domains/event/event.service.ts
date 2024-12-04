@@ -13,14 +13,13 @@ import StatusError from '@root/utils/statusError';
 import { FileExport } from './fileExport';
 import { WorkBook } from 'xlsx';
 import { FileImport } from './fileImport';
-import { error } from 'console';
 
 export interface IEventService {
-  getEvents(filter: FilterQueries): Promise<EventResponseType[]>;
+  getEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[]>;
   createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent>;
   importEventsFromExcel(fileBuffer: Buffer): Promise<IEvent[]>;
   exportEventsToExcel(events: EventResponseType[]): Promise<WorkBook>;
-  getGroupedEvents(filter: FilterQueries): Promise<EventResponseType[][]>;
+  getGroupedEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[][]>;
   validateImportPassword(password: string): void;
 }
 
@@ -31,19 +30,39 @@ export class EventService implements IEventService {
     private zoneRepo: IZoneRepository = new ZoneRepository(),
   ) { }
 
-  async getEvents(filter: FilterQueries): Promise<EventResponseType[]> {
-    const events = await this.repo.filterEvents(filter);
+  async getEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[]> {
+    let events = await this.repo.filterEvents(filter);
     const uniqueOrgNumbers: string[] = [...new Set(events.map((event) => event.orgNumber))];
     const organisations = await this.organisationRepo.findByOrgNumbers(uniqueOrgNumbers);
+    const currentOrg = await this.organisationRepo.findById(orgId);
+    if (!currentOrg.isPublic) {
+      events = events.filter((event) => event.orgNumber === currentOrg.orgNumber);
+    } else {
+      // remove all events that are private
+      events = events.filter((event) => {
+        const org = organisations.find((org) => org.orgNumber === event.orgNumber);
+        return org.isPublic;
+      });
+    }
 
     return events.map((event) => toEventDTO(event, organisations));
   }
 
-  async getGroupedEvents(filter: FilterQueries): Promise<EventResponseType[][]> {
-    const events = await this.repo.filterEvents(filter);
+  async getGroupedEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[][]> {
+    let events = await this.repo.filterEvents(filter);
     const uniqueOrgNumbers: string[] = [...new Set(events.map((event) => event.orgNumber))];
     const organisations = await this.organisationRepo.findByOrgNumbers(uniqueOrgNumbers);
-
+    const currentOrg = await this.organisationRepo.findById(orgId);
+    if (!currentOrg.isPublic) {
+      events = events.filter((event) => event.orgNumber === currentOrg.orgNumber);
+    } else {
+      // remove all events that are private
+      events = events.filter((event) => {
+        const org = organisations.find((org) => org.orgNumber === event.orgNumber);
+        return org.isPublic;
+      });
+    }
+    
     const groupedEvents = events.reduce((grouped, event) => {
       const key = event.sessionId;
       if (!grouped[key]) {
@@ -78,8 +97,8 @@ export class EventService implements IEventService {
     const excelFileReader: FileImport = new FileImport(
       fileBuffer,
       {
-        headerRow: 0,
-        dataRangeStart: 1,
+        headerRow: 2,
+        dataRangeStart: 3,
       }
     );
     const rows = await excelFileReader.getRows();
@@ -92,7 +111,8 @@ export class EventService implements IEventService {
       if(!row.sessionId || row.sessionId === '') {
         errors.push({ row: rows.indexOf(row) + 1, message: `"Leverans med" saknas` });
       }
-      if(!row.time || row.time === '') {
+      //check that time is a valid date with format yyyy-mm-ddThh:mmZ
+      if (!row.time || row.time === '' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}Z$/.test(row.time)) {
         errors.push({ row: rows.indexOf(row) + 1, message: `"Tidpunkt" saknas` });
       }
       const newEvent = new Event(row.sessionId, new Date(row.time), new Date(row.time));

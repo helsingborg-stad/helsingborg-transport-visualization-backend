@@ -34,12 +34,12 @@ export class FileImport {
         if (missingHeaders.length > 0) {
             throw new StatusError(400, `Saknar kolumner: ${missingHeaders.join(', ')}`);
         }
-        return rows[0].map((row) => {
+        return rows.map((row) => {
             const newRow = {};
             Object.keys(row).forEach((key) => {
                 newRow[this.keyMap[key]] = row[key];
             });
-            return newRow;
+            return newRow as TRow;
         });
     }
 }

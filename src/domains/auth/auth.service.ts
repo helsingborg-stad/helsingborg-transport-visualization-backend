@@ -95,6 +95,7 @@ export class AuthService implements IAuthService {
     const newOrganisation = new Organisation(orgNumber, email, name);
     newOrganisation.contactPerson = signupBody.contactPerson;
     newOrganisation.mobileNumber = signupBody.mobileNumber;
+    newOrganisation.isPublic = signupBody.isPublic;
     await newOrganisation.setPassword(password);
     await newOrganisation.setPinCode(pinCode);
 

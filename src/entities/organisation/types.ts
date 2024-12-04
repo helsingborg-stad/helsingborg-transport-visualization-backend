@@ -9,6 +9,7 @@ export interface IOrganisation {
   pinCode: string;
   forgotPasswordToken?: string;
   forgotPasswordTokenExpiration?: Date;
+  isPublic: boolean;
   createdAt: Date;
   updatedAt?: Date;
   buildToken: (isPasswordAuthenticated: boolean) => Promise<string>;

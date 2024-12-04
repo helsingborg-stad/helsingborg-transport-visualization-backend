@@ -40,4 +40,8 @@ export const signupValidation = validationMiddleware({
       message: 'must be 6 digits, max 2 repeating after each other, min 3 unique digits',
     },
   },
+  isPublic: {
+    presence: true,
+    type: 'boolean',
+  }
 });

@@ -12,6 +12,7 @@ export type SignupBody = {
   mobileNumber: string;
   password: string;
   pinCode: string;
+  isPublic: boolean;
 };
 
 export type ForgotPasswordBody = {
