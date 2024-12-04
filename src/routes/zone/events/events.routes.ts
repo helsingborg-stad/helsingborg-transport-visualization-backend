@@ -35,7 +35,9 @@ export const eventsRouter = () => {
    */
   router.get(
     '/',
-    async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
+    isAuth,
+    isPasswordAuthenticated(true),
+    async (req: Request<null, null, null, FilterEventQueryType> & AuthRequest, res: Response) => {
       try {
         const names = req.query.names?.split(',');
         const organisations = req.query.organisations?.split(',');
@@ -45,6 +47,7 @@ export const eventsRouter = () => {
         const timeInterval = req.query.timeInterval?.split('-');
         const from = req.query.from;
         const to = req.query.to;
+        const {id: orgId} = req.auth;
         const results = await eventService.getEvents({
           names,
           organisations,
@@ -54,7 +57,7 @@ export const eventsRouter = () => {
           timeInterval,
           from,
           to,
-        });
+        }, orgId);
         res.status(200).send(results);
       } catch (e) {
         return handleError(e, res);
@@ -76,7 +79,9 @@ export const eventsRouter = () => {
    */
   router.get(
     '/grouped',
-    async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
+    isAuth,
+    isPasswordAuthenticated(true),
+    async (req: Request<null, null, null, FilterEventQueryType> & AuthRequest, res: Response) => {
       try {
         const names = req.query.names?.split(',');
         const organisations = req.query.organisations?.split(',');
@@ -86,6 +91,7 @@ export const eventsRouter = () => {
         const timeInterval = req.query.timeInterval?.split('-');
         const from = req.query.from;
         const to = req.query.to;
+        const {id: orgId} = req.auth;
         const results = await eventService.getGroupedEvents({
           names,
           organisations,
@@ -95,7 +101,7 @@ export const eventsRouter = () => {
           timeInterval,
           from,
           to,
-        });
+        }, orgId);
         res.status(200).send(results);
       } catch (e) {
         return handleError(e, res);
@@ -183,7 +189,9 @@ export const eventsRouter = () => {
    */
   router.get(
     '/export',
-    async (req: Request<null, null, null, FilterEventQueryType>, res: Response) => {
+    isAuth,
+    isPasswordAuthenticated(true),
+    async (req: Request<null, null, null, FilterEventQueryType> & AuthRequest, res: Response) => {
       try {
         const names = req.query.names?.split(',');
         const organisations = req.query.organisations?.split(',');
@@ -193,6 +201,7 @@ export const eventsRouter = () => {
         const timeInterval = req.query.timeInterval?.split('-');
         const from = req.query.from;
         const to = req.query.to;
+        const {id: orgId} = req.auth;
         const results = await eventService.getEvents({
           names,
           organisations,
@@ -202,7 +211,7 @@ export const eventsRouter = () => {
           timeInterval,
           from,
           to,
-        });
+        }, orgId);
         const workBook = await eventService.exportEventsToExcel(results);
         const buffer = write(workBook, { type: 'buffer', bookType: 'xlsx' });
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

@@ -13,14 +13,13 @@ import StatusError from '@root/utils/statusError';
 import { FileExport } from './fileExport';
 import { WorkBook } from 'xlsx';
 import { FileImport } from './fileImport';
-import { error } from 'console';
 
 export interface IEventService {
-  getEvents(filter: FilterQueries): Promise<EventResponseType[]>;
+  getEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[]>;
   createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent>;
   importEventsFromExcel(fileBuffer: Buffer): Promise<IEvent[]>;
   exportEventsToExcel(events: EventResponseType[]): Promise<WorkBook>;
-  getGroupedEvents(filter: FilterQueries): Promise<EventResponseType[][]>;
+  getGroupedEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[][]>;
   validateImportPassword(password: string): void;
 }
 
@@ -31,19 +30,27 @@ export class EventService implements IEventService {
     private zoneRepo: IZoneRepository = new ZoneRepository(),
   ) { }
 
-  async getEvents(filter: FilterQueries): Promise<EventResponseType[]> {
-    const events = await this.repo.filterEvents(filter);
+  async getEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[]> {
+    let events = await this.repo.filterEvents(filter);
     const uniqueOrgNumbers: string[] = [...new Set(events.map((event) => event.orgNumber))];
     const organisations = await this.organisationRepo.findByOrgNumbers(uniqueOrgNumbers);
+    const currentOrg = await this.organisationRepo.findById(orgId);
+    if (!currentOrg.isPublic) {
+      events = events.filter((event) => event.orgNumber === currentOrg.orgNumber);
+    }
 
     return events.map((event) => toEventDTO(event, organisations));
   }
 
-  async getGroupedEvents(filter: FilterQueries): Promise<EventResponseType[][]> {
-    const events = await this.repo.filterEvents(filter);
+  async getGroupedEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[][]> {
+    let events = await this.repo.filterEvents(filter);
     const uniqueOrgNumbers: string[] = [...new Set(events.map((event) => event.orgNumber))];
     const organisations = await this.organisationRepo.findByOrgNumbers(uniqueOrgNumbers);
-
+    const currentOrg = await this.organisationRepo.findById(orgId);
+    if (!currentOrg.isPublic) {
+      events = events.filter((event) => event.orgNumber === currentOrg.orgNumber);
+    }
+    
     const groupedEvents = events.reduce((grouped, event) => {
       const key = event.sessionId;
       if (!grouped[key]) {
@@ -92,8 +99,10 @@ export class EventService implements IEventService {
       if(!row.sessionId || row.sessionId === '') {
         errors.push({ row: rows.indexOf(row) + 1, message: `"Leverans med" saknas` });
       }
-      if(!row.time || row.time === '') {
+      if (!row.time || row.time === '') {
         errors.push({ row: rows.indexOf(row) + 1, message: `"Tidpunkt" saknas` });
+      } else if (isNaN(Date.parse(row.time))) {
+        errors.push({ row: rows.indexOf(row) + 1, message: `"Tidpunkt" är inte ett giltigt datum och tid` });
       }
       const newEvent = new Event(row.sessionId, new Date(row.time), new Date(row.time));
       const org = await this.organisationRepo.findByOrgNumber(row.orgNumber);
