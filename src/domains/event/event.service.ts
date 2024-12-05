@@ -1,4 +1,4 @@
-import { EventResponseType, IEvent, Event, ZoneType } from '@root/entities';
+import { EventResponseType, GroupedEventsResponseType, IEvent, Event, ZoneType } from '@root/entities';
 import {
   IEventRepository,
   EventRepository,
@@ -7,6 +7,7 @@ import {
   IZoneRepository,
   ZoneRepository,
 } from '@root/repositories';
+import { Maps, IMaps } from '@root/services/maps';
 import { FilterQueries, CreateEventBody } from './types';
 import { toEventDTO } from './event.dto';
 import StatusError from '@root/utils/statusError';
@@ -19,7 +20,7 @@ export interface IEventService {
   createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent>;
   importEventsFromExcel(fileBuffer: Buffer): Promise<IEvent[]>;
   exportEventsToExcel(events: EventResponseType[]): Promise<WorkBook>;
-  getGroupedEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[][]>;
+  getGroupedEvents(filter: FilterQueries, orgId: string): Promise<GroupedEventsResponseType[]>;
   validateImportPassword(password: string): void;
 }
 
@@ -28,6 +29,7 @@ export class EventService implements IEventService {
     private repo: IEventRepository = new EventRepository(),
     private organisationRepo: IOrganisationRepository = new OrganisationRepository(),
     private zoneRepo: IZoneRepository = new ZoneRepository(),
+    private mapsService: IMaps = new Maps(),
   ) { }
 
   async getEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[]> {
@@ -48,7 +50,30 @@ export class EventService implements IEventService {
     return events.map((event) => toEventDTO(event, organisations));
   }
 
-  async getGroupedEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[][]> {
+  async getGroupedEventsStatistics(group: { events: EventResponseType[]}): Promise<GroupedEventsResponseType>{
+    return {
+      events: group.events,
+      statistics: {
+        numberOfStops: group.events.length,
+        totalDuration: new Date(group.events[0].enteredAt).getTime() - new Date(group.events[group.events.length - 1].exitedAt).getTime(),
+        numberOfDistinctZones: [...new Set(group.events.map((event) => event.area))].length,
+        averageStopDuration: group.events.reduce((acc, event, index, array) => {
+          if(index === 0) {
+            return acc;
+          }
+          return acc + new Date(array[index - 1].exitedAt).getTime() - new Date(event.enteredAt).getTime();
+        }, 0) / group.events.length,
+        activeDrivingTime: group.events.reduce((acc, event, index, array) => {
+        if (index === 0) {
+          return acc;
+        }
+        return acc + new Date(array[index - 1].exitedAt).getTime() - new Date(event.enteredAt).getTime();
+      }, 0)
+      }
+    }
+  }
+
+  async getGroupedEvents(filter: FilterQueries, orgId: string): Promise<GroupedEventsResponseType[]> {
     let events = await this.repo.filterEvents(filter);
     const uniqueOrgNumbers: string[] = [...new Set(events.map((event) => event.orgNumber))];
     const organisations = await this.organisationRepo.findByOrgNumbers(uniqueOrgNumbers);
@@ -63,16 +88,21 @@ export class EventService implements IEventService {
       });
     }
     
-    const groupedEvents = events.reduce((grouped, event) => {
+    const groupedEvents: {events: EventResponseType[]}[] = Object.values(events.reduce((grouped, event) => {
       const key = event.sessionId;
       if (!grouped[key]) {
-        grouped[key] = [];
+        grouped[key] = {
+          events: [],
+        };
       }
-      grouped[key].push(toEventDTO(event, organisations));
+      grouped[key].events.push(toEventDTO(event, organisations));
       return grouped;
-    }, {});
+    }, {}));
 
-    return Object.values(groupedEvents);
+    const groupedEventsWithMetaData = await Promise.all(groupedEvents.map(async (group) => {
+      return this.getGroupedEventsStatistics(group);
+    }));
+    return groupedEventsWithMetaData;
   }
 
   async createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent> {

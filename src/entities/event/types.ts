@@ -49,3 +49,14 @@ export type EventResponseType = {
   organisation: OrganisationResponse;
   distributionOrganisation: OrganisationResponse | null;
 };
+
+export type GroupedEventsResponseType = {
+  events: EventResponseType[];
+  statistics: {
+    numberOfStops: number;
+    totalDuration: number;
+    numberOfDistinctZones: number;
+    averageStopDuration: number;
+    activeDrivingTime: number;
+  }
+}
