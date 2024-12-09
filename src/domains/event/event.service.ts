@@ -57,18 +57,18 @@ export class EventService implements IEventService {
         numberOfStops: group.events.length,
         totalDuration: new Date(group.events[0].enteredAt).getTime() - new Date(group.events[group.events.length - 1].exitedAt).getTime(),
         numberOfDistinctZones: [...new Set(group.events.map((event) => event.area))].length,
-        averageStopDuration: group.events.reduce((acc, event, index, array) => {
-          if(index === 0) {
-            return acc;
-          }
-          return acc + new Date(array[index - 1].exitedAt).getTime() - new Date(event.enteredAt).getTime();
-        }, 0) / group.events.length,
-        activeDrivingTime: group.events.reduce((acc, event, index, array) => {
-        if (index === 0) {
-          return acc;
+        averageStopDuration: group.events.reduce((acc, event) => {
+          return acc + new Date(event.exitedAt).getTime() - new Date(event.enteredAt).getTime();
         }
-        return acc + new Date(array[index - 1].exitedAt).getTime() - new Date(event.enteredAt).getTime();
-      }, 0)
+        , 0) / group.events.length,
+        activeDrivingTime: group.events.reduce((acc, event, index, array) => {
+            if (index === 0) return acc;
+            return acc + new Date(event.enteredAt).getTime() - new Date(array[index - 1].exitedAt).getTime();
+          }, 0),
+          distance: group.events.reduce((acc, event) => {
+            return acc + event.distance;
+          }, 0)
+
       }
     }
   }

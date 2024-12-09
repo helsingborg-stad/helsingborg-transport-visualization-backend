@@ -11,6 +11,7 @@ export const toEventDTO = (event: IEvent, Organisations: IOrganisation[]): Event
     address: event.address,
     name: event.name,
     area: event.area,
+    distance: event.distance,
     zoneId: event.zoneId,
     enteredAt: event.enteredAt,
     exitedAt: event.exitedAt,
