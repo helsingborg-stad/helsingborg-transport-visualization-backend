@@ -10,7 +10,7 @@
     "test": "export $(cat .env.test | xargs) && jest --selectProjects test",
     "prepare": "npx husky install",
     "lint": "npx lint-staged",
-    "migrate:run": "npm run typeorm migration:run",
+    "migrate:run": "export $(cat .env | xargs) && npm run typeorm migration:run",
     "migrate:revert": "npm run typeorm migration:revert",
     "seed": "DB_CONNECTION_NAME=default node build/bin/seed.js",
     "test:migrate:run": "export $(cat .env.test | xargs) && npm run typeorm migration:run",

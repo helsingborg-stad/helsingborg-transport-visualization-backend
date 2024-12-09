@@ -6,4 +6,5 @@ export interface IConfig {
   dbConnectionName: string;
   mailApiKey: string;
   mailApiUrl: string;
+  googleMapsApiKey: string;
 }
