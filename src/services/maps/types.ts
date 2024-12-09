@@ -1,3 +1,5 @@
+import { LatLng } from '@googlemaps/google-maps-services-js';
+
 export interface IMaps {
-    getDistance: (origin: string, destination: string) => Promise<number>;
+    getDistance: (origin: LatLng, destination: LatLng) => Promise<number>;
 }
