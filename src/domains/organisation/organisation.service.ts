@@ -37,6 +37,7 @@ export class OrganisationService implements IOrganisationService {
     if (body.contactPerson !== undefined) organisation.contactPerson = body.contactPerson;
     if (body.mobileNumber !== undefined) organisation.mobileNumber = body.mobileNumber;
     if (body.email) organisation.email = body.email;
+    if(body.isPublic !== undefined) organisation.isPublic = body.isPublic;
     return toAuthDTO(await this.orgRepo.save(organisation), true);
   }
 }
