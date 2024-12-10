@@ -11,6 +11,7 @@ export interface IEvent {
   name: string;
   area: string;
   orgNumber: string;
+  distance: number;
   zoneId: string;
   distributionZoneId: string;
   enteredAt: Date;
@@ -42,6 +43,7 @@ export type EventResponseType = {
   address: string;
   name: string;
   area: string;
+  distance: number;
   zoneId: string;
   enteredAt: Date;
   exitedAt: Date;
@@ -49,3 +51,15 @@ export type EventResponseType = {
   organisation: OrganisationResponse;
   distributionOrganisation: OrganisationResponse | null;
 };
+
+export type GroupedEventsResponseType = {
+  events: EventResponseType[];
+  statistics: {
+    numberOfStops: number;
+    totalDuration: number;
+    numberOfDistinctZones: number;
+    averageStopDuration: number;
+    activeDrivingTime: number;
+    distance: number;
+  }
+}

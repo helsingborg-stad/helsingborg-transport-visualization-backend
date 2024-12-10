@@ -43,6 +43,9 @@ export class Event implements IEvent {
   @Column()
   exitedAt: Date;
 
+  @Column()
+  distance: number;
+
   @ManyToOne(() => Zone, (zone) => zone.events, { onDelete: 'CASCADE' })
   zone: IZone;
   @Column({ nullable: true })

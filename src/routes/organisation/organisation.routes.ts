@@ -123,7 +123,6 @@ export const organisationRoutes = () => {
       try {
         const { id } = req.params;
         const { id: userId } = req.auth;
-        console.log(req.body);
         const updatedOrganisation = await organisationService.updateOrganisation(id, userId, req.body);
         res.status(200).send(updatedOrganisation);
       } catch (e) {

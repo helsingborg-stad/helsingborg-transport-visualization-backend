@@ -8,4 +8,5 @@ export const config: IConfig = {
   dbConnectionName: process.env.DB_CONNECTION_NAME,
   mailApiKey: process.env.MAIL_API_KEY,
   mailApiUrl: process.env.MAIL_API_URL,
+  googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
 };
