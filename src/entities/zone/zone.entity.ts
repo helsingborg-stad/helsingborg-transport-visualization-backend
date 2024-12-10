@@ -58,4 +58,8 @@ export class Zone implements IZone {
     this.polygon = polygon;
     this.organisationId = organisationId;
   }
+
+  center(): string {
+    return `${this.lat},${this.lng}`;
+  }
 }

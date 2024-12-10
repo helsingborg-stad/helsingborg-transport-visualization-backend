@@ -9,6 +9,7 @@ export interface IEventRepository {
   save: (event: IEvent) => Promise<IEvent>;
   deleteByOrgNumber: (orgNumber: string) => Promise<void>;
   findEvent(enteredAt: Date, orgNumber: string, zoneId: string): Promise<IEvent | null>;
+  findEventsBySessionId(sessionId: string): Promise<IEvent[]>;
 }
 
 export class EventRepository implements IEventRepository {
@@ -113,6 +114,12 @@ export class EventRepository implements IEventRepository {
 
     query.orderBy('event.exitedAt', 'DESC');
     return query.getMany();
+  }
+
+  async findEventsBySessionId(sessionId: string): Promise<IEvent[]> {
+    return this.repo.find({ where: { sessionId }, order: {
+      exitedAt: 'DESC',
+    } })
   }
 
   async save(event: IEvent): Promise<IEvent> {

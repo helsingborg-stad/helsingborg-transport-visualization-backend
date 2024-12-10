@@ -14,6 +14,7 @@ import StatusError from '@root/utils/statusError';
 import { FileExport } from './fileExport';
 import { WorkBook } from 'xlsx';
 import { FileImport } from './fileImport';
+import logger from '@root/services/logger';
 
 export interface IEventService {
   getEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[]>;
@@ -120,6 +121,19 @@ export class EventService implements IEventService {
     newEvent.setZone(zone);
     newEvent.orgNumber = orgNumber;
     newEvent.distributionZoneId = distributionZoneId;
+    const sessionEvents = await this.repo.findEventsBySessionId(newEvent.sessionId);
+    try {
+      const zones = await Promise.all(sessionEvents.map((event) => this.zoneRepo.getZoneById(event.zoneId)));
+      if (sessionEvents.length > 0) {
+        const lastEvent = sessionEvents[sessionEvents.length - 1];
+        const lastZone = zones.find((zone) => zone.id === lastEvent.zoneId);
+        newEvent.distance = await this.mapsService.getDistance(lastZone.center(), zone.center());
+      } else {
+        newEvent.distance = 0;
+      }
+    } catch (error) {
+      logger.error('Error calculating distance', error);
+    }
     return this.repo.save(newEvent);
   }
 
@@ -168,6 +182,19 @@ export class EventService implements IEventService {
       throw new StatusError(400, errors.map((error) => `rad ${error.row}: ${error.message}`).join('|'));
     }
 
+    const zones = await Promise.all(events.map((event) => this.zoneRepo.getZoneById(event.zoneId)));
+    //order events by exited at date
+    events.sort((a, b) => a.exitedAt.getTime() - b.exitedAt.getTime());
+    for (let i = 0; i < events.length; i++) {
+      const event = events[i];
+      if (i === 0) {
+        event.distance = 0;
+      } else {
+        const prevZone = zones.find((zone) => zone.id === events[i - 1].zoneId);
+        const currentZone = zones.find((zone) => zone.id === event.zoneId);
+        event.distance = await this.mapsService.getDistance(prevZone.center(), currentZone.center());
+      }
+    }
     //@ts-ignore
     return await this.repo.save(events);
   }
