@@ -8,6 +8,7 @@ export type AuthDTO = {
   contactPerson: string;
   mobileNumber: string;
   token?: string;
+  isPublic: boolean;
   createdAt: Date;
   updatedAt?: Date;
 };

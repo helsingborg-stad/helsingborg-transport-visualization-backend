@@ -4,4 +4,5 @@ export type UpdateOrganisationBody = {
   contactPerson?: string;
   mobileNumber?: string;
   email?: string;
+  isPublic?: boolean;
 };

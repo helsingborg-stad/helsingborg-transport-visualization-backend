@@ -28,4 +28,8 @@ export const updateOrganisationValidation = validationMiddleware({
     presence: false,
     email: true,
   },
+  isPublic: {
+    presence: false,
+    type: 'boolean',
+  }
 });

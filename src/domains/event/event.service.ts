@@ -1,4 +1,4 @@
-import { EventResponseType, IEvent, Event, ZoneType } from '@root/entities';
+import { EventResponseType, GroupedEventsResponseType, IEvent, Event, ZoneType } from '@root/entities';
 import {
   IEventRepository,
   EventRepository,
@@ -7,19 +7,21 @@ import {
   IZoneRepository,
   ZoneRepository,
 } from '@root/repositories';
+import { Maps, IMaps } from '@root/services/maps';
 import { FilterQueries, CreateEventBody } from './types';
 import { toEventDTO } from './event.dto';
 import StatusError from '@root/utils/statusError';
 import { FileExport } from './fileExport';
 import { WorkBook } from 'xlsx';
 import { FileImport } from './fileImport';
+import logger from '@root/services/logger';
 
 export interface IEventService {
-  getEvents(filter: FilterQueries): Promise<EventResponseType[]>;
+  getEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[]>;
   createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent>;
   importEventsFromExcel(fileBuffer: Buffer): Promise<IEvent[]>;
   exportEventsToExcel(events: EventResponseType[]): Promise<WorkBook>;
-  getGroupedEvents(filter: FilterQueries): Promise<EventResponseType[][]>;
+  getGroupedEvents(filter: FilterQueries, orgId: string): Promise<GroupedEventsResponseType[]>;
   validateImportPassword(password: string): void;
 }
 
@@ -28,31 +30,80 @@ export class EventService implements IEventService {
     private repo: IEventRepository = new EventRepository(),
     private organisationRepo: IOrganisationRepository = new OrganisationRepository(),
     private zoneRepo: IZoneRepository = new ZoneRepository(),
+    private mapsService: IMaps = new Maps(),
   ) { }
 
-  async getEvents(filter: FilterQueries): Promise<EventResponseType[]> {
-    const events = await this.repo.filterEvents(filter);
+  async getEvents(filter: FilterQueries, orgId: string): Promise<EventResponseType[]> {
+    let events = await this.repo.filterEvents(filter);
     const uniqueOrgNumbers: string[] = [...new Set(events.map((event) => event.orgNumber))];
     const organisations = await this.organisationRepo.findByOrgNumbers(uniqueOrgNumbers);
+    const currentOrg = await this.organisationRepo.findById(orgId);
+    if (!currentOrg.isPublic) {
+      events = events.filter((event) => event.orgNumber === currentOrg.orgNumber);
+    } else {
+      // remove all events that are private
+      events = events.filter((event) => {
+        const org = organisations.find((org) => org.orgNumber === event.orgNumber);
+        return org.isPublic;
+      });
+    }
 
     return events.map((event) => toEventDTO(event, organisations));
   }
 
-  async getGroupedEvents(filter: FilterQueries): Promise<EventResponseType[][]> {
-    const events = await this.repo.filterEvents(filter);
+  async getGroupedEventsStatistics(group: { events: EventResponseType[]}): Promise<GroupedEventsResponseType>{
+    return {
+      events: group.events,
+      statistics: {
+        numberOfStops: group.events.length,
+        totalDuration: new Date(group.events[0].enteredAt).getTime() - new Date(group.events[group.events.length - 1].exitedAt).getTime(),
+        numberOfDistinctZones: [...new Set(group.events.map((event) => event.area))].length,
+        averageStopDuration: group.events.reduce((acc, event) => {
+          return acc + new Date(event.exitedAt).getTime() - new Date(event.enteredAt).getTime();
+        }
+        , 0) / group.events.length,
+        activeDrivingTime: group.events.reduce((acc, event, index, array) => {
+            if (index === 0) return acc;
+            return acc + new Date(event.enteredAt).getTime() - new Date(array[index - 1].exitedAt).getTime();
+          }, 0),
+          distance: group.events.reduce((acc, event) => {
+            return acc + event.distance;
+          }, 0)
+
+      }
+    }
+  }
+
+  async getGroupedEvents(filter: FilterQueries, orgId: string): Promise<GroupedEventsResponseType[]> {
+    let events = await this.repo.filterEvents(filter);
     const uniqueOrgNumbers: string[] = [...new Set(events.map((event) => event.orgNumber))];
     const organisations = await this.organisationRepo.findByOrgNumbers(uniqueOrgNumbers);
-
-    const groupedEvents = events.reduce((grouped, event) => {
+    const currentOrg = await this.organisationRepo.findById(orgId);
+    if (!currentOrg.isPublic) {
+      events = events.filter((event) => event.orgNumber === currentOrg.orgNumber);
+    } else {
+      // remove all events that are private
+      events = events.filter((event) => {
+        const org = organisations.find((org) => org.orgNumber === event.orgNumber);
+        return org.isPublic;
+      });
+    }
+    
+    const groupedEvents: {events: EventResponseType[]}[] = Object.values(events.reduce((grouped, event) => {
       const key = event.sessionId;
       if (!grouped[key]) {
-        grouped[key] = [];
+        grouped[key] = {
+          events: [],
+        };
       }
-      grouped[key].push(toEventDTO(event, organisations));
+      grouped[key].events.push(toEventDTO(event, organisations));
       return grouped;
-    }, {});
+    }, {}));
 
-    return Object.values(groupedEvents);
+    const groupedEventsWithMetaData = await Promise.all(groupedEvents.map(async (group) => {
+      return this.getGroupedEventsStatistics(group);
+    }));
+    return groupedEventsWithMetaData;
   }
 
   async createEvent(zoneId: string, orgNumber: string, os: string, requestBody: CreateEventBody): Promise<IEvent> {
@@ -70,6 +121,19 @@ export class EventService implements IEventService {
     newEvent.setZone(zone);
     newEvent.orgNumber = orgNumber;
     newEvent.distributionZoneId = distributionZoneId;
+    const sessionEvents = await this.repo.findEventsBySessionId(newEvent.sessionId);
+    try {
+      const zones = await Promise.all(sessionEvents.map((event) => this.zoneRepo.getZoneById(event.zoneId)));
+      if (sessionEvents.length > 0) {
+        const lastEvent = sessionEvents[sessionEvents.length - 1];
+        const lastZone = zones.find((zone) => zone.id === lastEvent.zoneId);
+        newEvent.distance = await this.mapsService.getDistance(lastZone.center(), zone.center());
+      } else {
+        newEvent.distance = 0;
+      }
+    } catch (error) {
+      logger.error('Error calculating distance', error);
+    }
     return this.repo.save(newEvent);
   }
 
@@ -77,29 +141,60 @@ export class EventService implements IEventService {
     const excelFileReader: FileImport = new FileImport(
       fileBuffer,
       {
-        headerRow: 0,
-        dataRangeStart: 1,
+        headerRow: 2,
+        dataRangeStart: 3,
       }
     );
     const rows = await excelFileReader.getRows();
     const events: IEvent[] = [];
+    const errors: {
+      row: number;
+      message: string;
+    }[] = [];
     for (const row of rows) {
+      if(!row.sessionId || row.sessionId === '') {
+        errors.push({ row: rows.indexOf(row) + 1, message: `"Leverans med" saknas` });
+      }
+      //check that time is a valid date with format yyyy-mm-ddThh:mmZ
+      if (!row.time || row.time === '' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}Z$/.test(row.time)) {
+        errors.push({ row: rows.indexOf(row) + 1, message: `"Tidpunkt" saknas` });
+      }
       const newEvent = new Event(row.sessionId, new Date(row.time), new Date(row.time));
       const org = await this.organisationRepo.findByOrgNumber(row.orgNumber);
       if(!org) {
-        throw new StatusError(400, `Organisation "${row.orgNumber}" not found`);
+        errors.push({ row: rows.indexOf(row) + 1, message: `Organisationsnummer "${row.orgNumber}" hittades inte` });
       }
       newEvent.orgNumber = row.orgNumber;
       const zone = await this.zoneRepo.getZoneByGln(row.gln);
       if (!zone) {
-        throw new StatusError(400, `Zone "${row.gln}" not found`);
-      }
-      newEvent.setZone(zone);
-      if (!(await this.repo.findEvent(newEvent.enteredAt, newEvent.orgNumber, zone.id))) {
-        events.push(newEvent);
+        errors.push({ row: rows.indexOf(row) + 1, message: `Zon "${row.gln}" hittades inte` });
+      } else {
+        newEvent.setZone(zone);
+        if (!(await this.repo.findEvent(newEvent.enteredAt, newEvent.orgNumber, zone.id))) {
+          events.push(newEvent);
+        } else {
+          errors.push({ row: rows.indexOf(row) + 1, message: `Leverans existerar redan med "${row.orgNumber}" med tidpunkt "${row.time}"` });
+        }
       }
     }
 
+    if(errors.length > 0) {
+      throw new StatusError(400, errors.map((error) => `rad ${error.row}: ${error.message}`).join('|'));
+    }
+
+    const zones = await Promise.all(events.map((event) => this.zoneRepo.getZoneById(event.zoneId)));
+    //order events by exited at date
+    events.sort((a, b) => a.exitedAt.getTime() - b.exitedAt.getTime());
+    for (let i = 0; i < events.length; i++) {
+      const event = events[i];
+      if (i === 0) {
+        event.distance = 0;
+      } else {
+        const prevZone = zones.find((zone) => zone.id === events[i - 1].zoneId);
+        const currentZone = zones.find((zone) => zone.id === event.zoneId);
+        event.distance = await this.mapsService.getDistance(prevZone.center(), currentZone.center());
+      }
+    }
     //@ts-ignore
     return await this.repo.save(events);
   }

@@ -55,11 +55,18 @@ export class ExcelFileReader {
         }
     }
 
-    getHeader() {
-        const lastHeaderCell = this.getEndCell().replace(/\d+/g, `${this.fileOptions.headerRow}`);
-        const headerDefinition: any[][] = XLSX
-            .utils.sheet_to_json(this.currentWorkSheet, { range: `A${this.fileOptions.headerRow}:${lastHeaderCell}`, defval: null, header: 'A' });
-        return headerDefinition[0] ? Object.values(headerDefinition[0]) : [];
+    getHeader(): string[] {
+        const headers = [];
+        const range = XLSX.utils.decode_range(this.currentWorkSheet['!ref']);
+        const firstRow = range.s.r + this.fileOptions.headerRow;
+
+        for (let col = range.s.c; col <= range.e.c; col++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: firstRow, c: col });
+            const cell = this.currentWorkSheet[cellAddress];
+            headers.push(cell ? cell.v : `UNKNOWN ${col}`);
+        }
+
+        return headers;
     }
 
     private getEndCell() {
@@ -84,7 +91,19 @@ export class ExcelFileReader {
 
         for (let i = 0; i < sheets.length; i++) {
             const sheet = this.file.Sheets[sheets[i]];
-            data.push(XLSX.utils.sheet_to_json(sheet, { defval: null }));
+            const headers = this.getHeader();
+            const range = XLSX.utils.decode_range(sheet['!ref']);
+            const dataStartRow = range.s.r + this.fileOptions.dataRangeStart;
+
+            for (let row = dataStartRow; row <= range.e.r; row++) {
+                const rowData = {};
+                for (let col = range.s.c; col <= range.e.c; col++) {
+                    const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+                    const cell = sheet[cellAddress];
+                    rowData[headers[col - range.s.c]] = cell ? cell.v : null;
+                }
+                data.push(rowData);
+            }
         }
 
         return data;

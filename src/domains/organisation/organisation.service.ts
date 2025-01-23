@@ -34,9 +34,10 @@ export class OrganisationService implements IOrganisationService {
     if (!organisation) throw new StatusError(404, 'Organisation not found');
     if (body.password) await organisation.setPassword(body.password);
     if (body.pinCode) await organisation.setPinCode(body.pinCode);
-    if (body.contactPerson) organisation.contactPerson = body.contactPerson;
-    if (body.mobileNumber) organisation.mobileNumber = body.mobileNumber;
+    if (body.contactPerson !== undefined) organisation.contactPerson = body.contactPerson;
+    if (body.mobileNumber !== undefined) organisation.mobileNumber = body.mobileNumber;
     if (body.email) organisation.email = body.email;
+    if(body.isPublic !== undefined) organisation.isPublic = body.isPublic;
     return toAuthDTO(await this.orgRepo.save(organisation), true);
   }
 }

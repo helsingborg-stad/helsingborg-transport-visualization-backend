@@ -19,6 +19,7 @@ export interface IZone {
   createdAt: Date;
   organisationId: string;
   organisation: IOrganisation;
+  center: () => string;
 }
 
 export type FeatureCollection = GeoJsonObject & {
